@@ -1,0 +1,9 @@
+[Unit]
+Description=honeypot
+
+[Service]
+Type=simple
+User=honeypot
+Group=honeypot
+WorkingDirectory=/root/git/Honeypot/
+ExecStart=/root/git/Honeypot/honeypot.py
