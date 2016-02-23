@@ -32,9 +32,9 @@
                 <li ng-show="user.role == '0'" ng-class="{active: isActive('/add_package')}"><a href="#/add_package">Add package</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li ng-show="loggedin" ng-class="{active: isActive('/profile')}"><a href="#/profile">Profile</a></li>
-                <li ng-show="!loggedin" ng-class="{active: isActive('/login')}"><a href="#/login">Login</a></li>
-                <li ng-show="loggedin"><a ng-click="logout()" href="">Logout</a></li>
+                <li ng-show="user != null" ng-class="{active: isActive('/profile')}"><a href="#/profile">Profile</a></li>
+                <li ng-show="user == null" ng-class="{active: isActive('/login')}"><a ng-href="https://github.com/login/oauth/authorize?scope=user:email&client_id={{client_id}}" style="color: #fff; background-color: #444; border-color: rgba(0,0,0,0.2);"><span class="fa fa-github"></span>Login with GitHub</a></li>
+                <li ng-show="user != null"><a ng-click="logout()" href="">Logout</a></li>
             </ul>
         </div>
     </div>
