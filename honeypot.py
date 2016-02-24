@@ -23,7 +23,7 @@ def create_database():
     db.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id VARCHAR(20),
-            username VARCHAR(100),
+            name VARCHAR(100),
             access_token VARCHAR(30),
             PRIMARY KEY (id)
         )
@@ -74,7 +74,7 @@ def main():
         userexists = len(get_db().execute("SELECT id FROM users WHERE id='" + user.id + "'").fetchall()) != 0
         if not userexists:
             print("Creating user")
-            get_db().execute("INSERT INTO users (username, id, access_token) VALUES ('" + user.name + "', '"+user.id+"', '"+user.access_token+"')")
+            get_db().execute("INSERT INTO users (name, id, access_token) VALUES ('" + user.name + "', '"+user.id+"', '"+user.access_token+"')")
             get_db().commit()
         else:
             print("User exists.")

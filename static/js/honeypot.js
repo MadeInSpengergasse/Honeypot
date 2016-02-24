@@ -14,7 +14,6 @@ app.controller("CatchAllCtrl", function ($scope, $routeParams) {
 });
 
 app.controller("HeaderController", function($rootScope, $scope, $http) {
-    console.log("Header");
     $http.get("/api/get_client_id").success(function(data) {
         $scope.client_id = data;
     });
