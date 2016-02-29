@@ -196,7 +196,7 @@ def main():
 
     # -------------------------- GET --------------------------
 
-    @app.route('/api/get_todo_details', methods=['GET'])
+    @app.route('/api/get_todo_detail', methods=['GET'])
     @flask_login.login_required
     def get_details():
         response = get_db().execute("SELECT * FROM todo WHERE t_id=?", (flask.request.args.get("id"),)).fetchone()
@@ -214,21 +214,32 @@ def main():
     @app.route('/api/get_todos', methods=['GET'])
     @flask_login.login_required
     def get_todo_details():
-        return "Not implemented."
+        project_id = flask.request.args.get("project_id")
+        if project_id is not None:
+            print("")
+            result = get_db().execute("SELECT t_id, t_title, t_description, t_status FROM todo WHERE t_p_project=?", (project_id,)).fetchall()
+            ret = []
+            for a in result:  # TODO: Return better timestamp things
+                ret.append({"id": a[0], "title": a[1], "description": a[2], "status": a[3]})
+            return json.dumps(ret)
+        return "Anything other than project_id is not implemented. (eg. milestone id)"
         # TODO: Implement
 
     @app.route('/api/get_milestones', methods=['GET'])
     @flask_login.login_required
     def get_milestones():
+        print(flask.request.args.get("id"))
         return "Not implemented."
         # TODO: Implement
 
     @app.route('/api/get_projects', methods=['GET'])
     @flask_login.login_required
     def get_projects():
-        res = get_db().execute("SELECT p_id, p_title, p_status FROM project").fetchall()
-        return "Not implemented."
-        # TODO: Implement
+        res = get_db().execute("SELECT p_id, p_title, p_description, p_status FROM project").fetchall()
+        ret = []
+        for tupl in res:
+            ret.append({"id": tupl[0], "title": tupl[1], "description": tupl[2], "status": tupl[3]})
+        return json.dumps(ret)
 
     # -------------------------- OTHER --------------------------
 

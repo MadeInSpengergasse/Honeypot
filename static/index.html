@@ -6,7 +6,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-route.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-animate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.3.0/showdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-showdown/1.1.0/ng-showdown.min.js"></script>
     <script src="js/honeypot.js"></script>
     <meta charset="UTF-8">
     <title>Honeypot</title>
@@ -28,8 +30,7 @@
         <div class="collapse navbar-collapse" uib-collapse="navCollapsed" ng-click="navCollapsed=true;">
             <ul class="nav navbar-nav">
                 <li ng-class="{active: isActive('/')}"><a href="#/">Home <span class="sr-only">(current)</span></a></li>
-                <li ng-class="{active: isActive('/packages')}"><a href="#/packages">Packages</a></li>
-                <li ng-show="user.role == '0'" ng-class="{active: isActive('/add_package')}"><a href="#/add_package">Add package</a></li>
+                <li ng-class="{active: isActive('/projects')}"><a href="#/projects">Projects</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li ng-show="user != null" ng-class="{active: isActive('/profile')}"><a href="#/profile">Profile</a></li>

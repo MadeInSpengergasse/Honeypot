@@ -1,0 +1,8 @@
+<div ng-controller="ProjectsController">
+    <p>All Projects:</p>
+    <div ng-repeat="project in projects" style="border: 2px solid black;">
+        <h3><a href="#/project/{{ project.id }}">{{ project.title }}</a></h3>
+        <p>{{ project.description }}</p>
+        <p>Status: {{ project.status }}</p>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div>
+    <h1>Project Nr. {{ id }}</h1>
+    <p>Count: {{ todos.length }}</p>
+<div ng-repeat="todo in todos" style="border: 2px solid black;">
+    <h2><a href="#/project/{{ id }}/todo/{{ todo.id }}">{{ todo.title }}</a></h2>
+    <p>{{ todo.description }}</p>
+    <p>ID: {{ todo.id }}</p>
+    <p>Status: {{ todo.status }}</p>
+</div>
+</div>

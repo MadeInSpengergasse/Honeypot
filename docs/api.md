@@ -30,8 +30,9 @@
 ```
 #### GET
 ```
-/api/get_todo_details GET
+/api/get_todo_detail GET
 /api/get_todos GET (for project / for milestone)
 /api/get_milestones GET (for project)
 /api/get_projects GET
 ```
+some label assign methods
