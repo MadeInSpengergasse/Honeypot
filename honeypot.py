@@ -36,6 +36,8 @@ def main():
     def root():
         return flask.send_from_directory('static', 'index.html')
 
+    # -------------------------- GENERAL --------------------------
+
     @app.route('/api/github_callback', methods=['GET'])
     def github_callback():
         payload = {"client_id": config.github_client_id,
@@ -88,6 +90,8 @@ def main():
         ret_obj = {"status": "ok", "user": flask_login.current_user.__dict__}
         return flask.Response(json.dumps(ret_obj), mimetype="application/json")
 
+    # -------------------------- ADD --------------------------
+
     @app.route('/api/add_todo', methods=['POST'])
     @flask_login.login_required
     def add_todo():
@@ -100,6 +104,26 @@ def main():
              lastrow))
         get_db().commit()
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+
+    @app.route('/api/add_label', methods=['POST'])
+    @flask_login.login_required
+    def add_label():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/add_milestone', methods=['POST'])
+    @flask_login.login_required
+    def add_milestone():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/add_project', methods=['POST'])
+    @flask_login.login_required
+    def add_project():
+        return "Not implemented."
+        # TODO: Implement
+
+    # -------------------------- UPDATE --------------------------
 
     @app.route('/api/update_todo', methods=['POST'])
     @flask_login.login_required
@@ -121,6 +145,26 @@ def main():
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
         # TODO: Test
 
+    @app.route('/api/update_label', methods=['POST'])
+    @flask_login.login_required
+    def update_label():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/update_milestone', methods=['POST'])
+    @flask_login.login_required
+    def update_milestone():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/update_project', methods=['POST'])
+    @flask_login.login_required
+    def update_project():
+        return "Not implemented."
+        # TODO: Implement
+
+    # -------------------------- REMOVE --------------------------
+
     @app.route('/api/remove_todo', methods=['POST'])
     @flask_login.login_required
     def remove_todo():
@@ -131,6 +175,26 @@ def main():
                                   mimetype="application/json")
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
         # TODO: Test
+
+    @app.route('/api/remove_label', methods=['POST'])
+    @flask_login.login_required
+    def remove_label():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/remove_milestone', methods=['POST'])
+    @flask_login.login_required
+    def remove_milestone():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/remove_project', methods=['POST'])
+    @flask_login.login_required
+    def remove_project():
+        return "Not implemented."
+        # TODO: Implement
+
+    # -------------------------- GET --------------------------
 
     @app.route('/api/get_todo_details', methods=['GET'])
     @flask_login.login_required
@@ -146,6 +210,27 @@ def main():
             return flask.Response(json.dumps(ret), mimetype="application/json")
         return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                               mimetype="application/json")
+
+    @app.route('/api/get_todos', methods=['GET'])
+    @flask_login.login_required
+    def get_todo_details():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/get_milestones', methods=['GET'])
+    @flask_login.login_required
+    def get_milestones():
+        return "Not implemented."
+        # TODO: Implement
+
+    @app.route('/api/get_projects', methods=['GET'])
+    @flask_login.login_required
+    def get_projects():
+        res = get_db().execute("SELECT p_id, p_title, p_status FROM project").fetchall()
+        return "Not implemented."
+        # TODO: Implement
+
+    # -------------------------- OTHER --------------------------
 
     @app.route('/<path:filename>')
     def catch_all(filename):
