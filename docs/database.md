@@ -12,14 +12,14 @@ l_color (how to color it)
 __m <-> n relationship between labels and todos!__
 
 ###ToDo's
-t_id (unique id)
-t_title (big title)
-t_description (longer text)
-t_u_asignee (user id; more than one?)
-t_m_milestone (milestone id)
-t_status (closed?)
-t_ts_created (timestamp of created)
-t_ts_closed (timestamp of closed)
+t_id (unique id) (not null)
+t_title (big title) (not null, no empty string)
+t_description (longer text) (not null, only empty string)
+t_u_asignee (user id; more than one?) (can be null)
+t_m_milestone (milestone id) (can be null)
+t_status (closed?) (0=open, 1=closed)
+t_ts_created (timestamp of created) (not null)
+t_ts_closed (timestamp of closed) (can be null)
 
 ###Milestone
 m_id (unique id)
@@ -37,5 +37,6 @@ p_description (long-ish description)
 p_status (closed?)
 
 ### Timestamp
+ts_id (unique id)
 ts_u_id (user who did that)
 ts_timestamp (when it happened)
