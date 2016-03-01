@@ -10,6 +10,7 @@
     <orderEntry type="library" name="ui-bootstrap-tpls" level="application" />
     <orderEntry type="library" name="ng-showdown" level="application" />
     <orderEntry type="library" name="showdown" level="application" />
+    <orderEntry type="library" name="angular-sanitize" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />

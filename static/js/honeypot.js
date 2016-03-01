@@ -1,4 +1,4 @@
-var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap']);
+var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ng-showdown']);
 
 app.config(function ($routeProvider) {
     $routeProvider.when('/', {
@@ -51,7 +51,7 @@ app.controller("ProjectController", function($scope, $routeParams, $http) {
     });
 });
 
-app.controller("TodoController", function($scope, $routeParams, $http/*, $showdown*/) {
+app.controller("TodoController", function($scope, $routeParams, $http, $showdown) {
     $scope.id = $routeParams.todo_id;
     $scope.project_id = $routeParams.project_id;
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function(data) {

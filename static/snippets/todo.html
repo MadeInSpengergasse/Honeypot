@@ -2,7 +2,7 @@
     <a href="#/project/{{ project_id }}">Back</a>
     <h2>{{ todo.title }}</h2>
     <p>Todo Nr. {{ id }}</p>
-    <p>{{ todo.description }}</p>
+    <p markdown-to-html="todo.description"></p>
     <p>Status: {{ todo.status }}</p>
     <p>Created by: {{ todo.createdby }}</p>
     <p>Date created: {{ todo.created }}</p>
