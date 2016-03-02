@@ -1,4 +1,4 @@
-var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ng-showdown']);
+var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ng-showdown', 'ngMaterial']);
 
 app.config(function ($routeProvider) {
     $routeProvider.when('/', {
@@ -19,9 +19,11 @@ app.controller("CatchAllCtrl", function ($scope, $routeParams) {
     $scope.templatePath = "snippets/" + $routeParams.templatePath + ".html";
 });
 
-app.controller("HeaderController", function($rootScope, $scope, $http) {
+app.controller("HeaderController", function($rootScope, $scope, $http, $location) {
+    $rootScope.status_strings = ["Open", "Closed"];
     $http.get("/api/get_client_id").success(function(data) {
         $scope.client_id = data;
+        $scope.github_login_url = "https://github.com/login/oauth/authorize?scope=user:email&client_id=" + data;
     });
     $http.get("/api/get_user_info").success(function(data) {
         if(data.status == "ok") {
@@ -31,9 +33,15 @@ app.controller("HeaderController", function($rootScope, $scope, $http) {
     $scope.logout = function () {
         $http.post("/api/logout", null).success(function (data) {
             $rootScope.user = null;
-            $location.path("/");
+            $location.path("/")
         });
     };
+    $scope.href = function(url) {
+        $location.path(url);
+    };
+    $scope.goto = function(url) {
+        window.location.href = url;
+    }
 });
 
 app.controller("ProjectsController", function($scope, $http) {
@@ -51,12 +59,11 @@ app.controller("ProjectController", function($scope, $routeParams, $http) {
     });
 });
 
-app.controller("TodoController", function($scope, $routeParams, $http, $showdown) {
+app.controller("TodoController", function($scope, $routeParams, $http) {
     $scope.id = $routeParams.todo_id;
     $scope.project_id = $routeParams.project_id;
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function(data) {
         console.log(data);
         $scope.todo = data;
-        //$scope.markdown_description = $showdown.makeHtml(data.description);
     });
 });

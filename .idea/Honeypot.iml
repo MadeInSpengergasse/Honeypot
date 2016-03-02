@@ -11,9 +11,9 @@
     <orderEntry type="library" name="ng-showdown" level="application" />
     <orderEntry type="library" name="showdown" level="application" />
     <orderEntry type="library" name="angular-sanitize" level="application" />
-  </component>
-  <component name="TemplatesService">
-    <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
+    <orderEntry type="library" name="angular-material" level="application" />
+    <orderEntry type="library" name="angular-aria" level="application" />
+    <orderEntry type="library" name="angular-messages" level="application" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />

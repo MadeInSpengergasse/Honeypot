@@ -1,0 +1,25 @@
+.status {
+    padding: 4px 8px;
+    color: #fff;
+    border-radius: 3px;
+    margin-right: 8px;
+}
+
+
+.status-closed {
+    background-color: #bc2b00;
+}
+
+.status-open {
+    background-color: #6bc543;
+}
+
+.projects-button {
+    margin-left: 20px;
+}
+
+.profile-picture {
+    margin-top: 5px;
+    height: 50px;
+    width: 50px;
+}

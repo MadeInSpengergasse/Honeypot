@@ -1,8 +1,32 @@
 <div ng-controller="ProjectsController">
-    <p>All Projects:</p>
-    <div ng-repeat="project in projects" style="border: 2px solid black;">
-        <h3><a href="#/project/{{ project.id }}">{{ project.title }}</a></h3>
-        <p>{{ project.description }}</p>
-        <p>Status: {{ project.status }}</p>
-    </div>
+    <md-content>
+        <h2>All Projects:</h2>
+        <md-button ng-click="add_project()" class="md-raised md-primary">Add project</md-button>
+        <!--<div ng-repeat="project in projects" style="border: 2px solid black;">
+            <h3><a href="#/project/{{ project.id }}">{{ project.title }}</a></h3>
+            <p>{{ project.description }}</p>
+            <p>Status: {{ project.status }}</p>
+        </div>-->
+        <md-divider></md-divider>
+        <md-list>
+            <!--<md-list-item class="md-3-line" ng-repeat="project in projects">
+                &lt;!&ndash;<img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}" />&ndash;&gt;
+                <div class="md-list-item-text" layout="column">
+                    <h3><a href="#/project/{{ project.id }}">{{ project.title }}</a></h3>
+                    <h4>{{ project.status }}</h4>
+                    &lt;!&ndash;<p>{{ item.notes }}</p>&ndash;&gt;
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>-->
+            <div ng-repeat="project in projects">
+                <!--<a ng-href="#/project/{{ project.id }}">-->
+            <md-list-item ng-href="#/project/{{ project.id }}">
+                <div class="status" ng-class="project.status == 0 ? 'status-open' : 'status-closed'">{{ status_strings[project.status] }}</div>
+                <p> {{ project.title }} </p>
+                <!--<md-checkbox class="md-secondary" ng-model="topping.wanted"></md-checkbox>-->
+            </md-list-item>
+                    <!--</a>-->
+                </div>
+        </md-list>
+    </md-content>
 </div>

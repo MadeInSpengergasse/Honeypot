@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="honeypotApp">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.5/angular-material.min.css">
+    <link rel="stylesheet" href="css/honeypot.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-route.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-animate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-sanitize.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-aria.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular-messages.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.5/angular-material.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.3.0/showdown.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-showdown/1.1.0/ng-showdown.min.js"></script>
     <script src="js/honeypot.js"></script>
+
+    <!-- REMOVE LATER -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.min.js"></script>-->
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">-->
+
     <meta charset="UTF-8">
     <title>Honeypot</title>
     <!-- <link rel="icon" type="image/png" href="favicon.png"/> -->
 </head>
 <body>
-<nav class="navbar navbar-default" ng-controller="HeaderController">
+<!--<nav class="navbar navbar-default" ng-controller="HeaderController">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" aria-expanded="false" ng-click="navCollapsed = !navCollapsed">
+            <button type="button" class="navbar-toggle collapsed" aria-expanded="false"
+                    ng-click="navCollapsed = !navCollapsed">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -34,13 +44,47 @@
                 <li ng-class="{active: isActive('/projects')}"><a href="#/projects">Projects</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li ng-show="user != null" ng-class="{active: isActive('/profile')}"><a href="#/profile">Profile</a></li>
-                <li ng-show="user == null" ng-class="{active: isActive('/login')}"><a ng-href="https://github.com/login/oauth/authorize?scope=user:email&client_id={{client_id}}" style="color: #fff; background-color: #444; border-color: rgba(0,0,0,0.2);"><span class="fa fa-github"></span>Login with GitHub</a></li>
+                <li ng-show="user != null" ng-class="{active: isActive('/profile')}"><a href="#/profile">Profile</a>
+                </li>
+                <li ng-show="user == null" ng-class="{active: isActive('/login')}"><a
+                        ng-href="https://github.com/login/oauth/authorize?scope=user:email&client_id={{ client_id }}"
+                        style="color: #fff; background-color: #444; border-color: rgba(0,0,0,0.2);"><span
+                        class="fa fa-github"></span>Login with GitHub</a></li>
                 <li ng-show="user != null"><a ng-click="logout()" href="">Logout</a></li>
             </ul>
         </div>
     </div>
-</nav>
+</nav>-->
+<div ng-controller="HeaderController">
+    <md-toolbar layout="row" md-whiteframe="4">
+        <!--<img src="images/logo.svg" style="height:49px; margin-top:5px; margin-left:10px;">-->
+        <a href="#/" style="text-decoration: none; color: inherit;">
+            <img src="images/logo.svg" style="max-width: 100%; height: 50px; vertical-align: middle; margin-left: 5px;">
+            <span style="line-height: 64px;">Honeypot</span>
+        </a>
+        <md-button class="projects-button" ng-show="user != null" ng-click="href('/projects')">Projects</md-button>
+        <div flex></div>
+
+        <!--<md-button>About</md-button>-->
+        <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
+        <img ng-show="user != null" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}" class="md-avatar profile-picture" alt="{{user.name}}">
+        <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
+        <!--https://avatars.githubusercontent.com/u/-->
+    </md-toolbar>
+</div>
+<!-- <div flex layout="row">
+    <md-sidenav flex="15" md-is-locked-open="true" class="md-whiteframe-z1">
+      <md-content>
+        sidenav
+      </md-content>
+    </md-sidenav>
+    <div layout="column" flex>
+      <div ng-view></div>
+    </div>
+
+  </div> -->
+
+
 <div ng-view style="margin: 30px;"></div>
 </body>
 </html>

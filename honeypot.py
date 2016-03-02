@@ -22,6 +22,15 @@ def create_database():
     db = sqlite3.connect("honeypot.sqlite")
     db.executescript(open("create_database.sql", "r").read())
     db.commit()
+#     print(db.execute("""
+# SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
+# (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
+# (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
+# (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
+# (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
+# t.t_p_project
+# FROM todo t, timestamp ts where t.t_id=?
+#     """).fetchall()[0])
     db.close()
 
 
@@ -62,6 +71,7 @@ def main():
         user.access_token = access_token
         user.id = str(json_resp.get("id"))
         user.name = json_resp.get("login")
+        print(json_resp)
         flask_login.login_user(user)
 
         userexists = len(get_db().execute("SELECT u_id FROM users WHERE u_id = ?", (user.id,)).fetchall()) != 0
@@ -168,6 +178,12 @@ def main():
     @app.route('/api/remove_todo', methods=['POST'])
     @flask_login.login_required
     def remove_todo():
+        timestamps = get_db().execute("SELECT t_ts_created, t_ts_closed FROM todo WHERE t_id=?",
+                                      (flask.request.json.get("id"),)).fetchall()
+        if not timestamps:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Unknown id.\"}",
+                                  mimetype="application/json")
+        get_db().execute("DELETE FROM timestamp WHERE ts_id IN (?, ?)", timestamps[0])
         rowcount = get_db().execute("DELETE FROM todo WHERE t_id=?", (flask.request.json.get("id"),)).rowcount
         get_db().commit()
         if rowcount != 1:
@@ -199,38 +215,53 @@ def main():
     @app.route('/api/get_todo_detail', methods=['GET'])
     @flask_login.login_required
     def get_details():
-        response = get_db().execute("SELECT * FROM todo WHERE t_id=?", (flask.request.args.get("id"),)).fetchone()
-        if response is not None:
-            # TODO: also return date and user for timestamps (subselects)
-            time_response = get_db().execute("SELECT * FROM timestamp WHERE ts_id IN (?, ?)",
-                                             (response[6], response[7])).fetchall()
-            ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
-                   "milestone": response[4], "status": response[5], "created": "TODO", "createdby": "TODO",
-                   "closed": "TODO", "closedby": "TODO"}
-            return flask.Response(json.dumps(ret), mimetype="application/json")
-        return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
-                              mimetype="application/json")
+        response = get_db().execute("""
+            SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
+            (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
+            (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
+            (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
+            (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
+            t.t_p_project
+            FROM todo t, timestamp ts where t.t_id=?
+        """, flask.request.args.get("id")).fetchone()
+        ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
+               "milestone": response[4], "status": response[5], "created": response[6], "createdby": response[7],
+               "closed": response[8], "closedby": response[9]}
+        return flask.Response(json.dumps(ret), mimetype="application/json")
+        # return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
+        #                       mimetype="application/json")
 
     @app.route('/api/get_todos', methods=['GET'])
     @flask_login.login_required
     def get_todo_details():
         project_id = flask.request.args.get("project_id")
+        milestone_id = flask.request.args.get("milestone_id")
         if project_id is not None:
-            print("")
-            result = get_db().execute("SELECT t_id, t_title, t_description, t_status FROM todo WHERE t_p_project=?", (project_id,)).fetchall()
-            ret = []
-            for a in result:  # TODO: Return better timestamp things
-                ret.append({"id": a[0], "title": a[1], "description": a[2], "status": a[3]})
-            return json.dumps(ret)
-        return "Anything other than project_id is not implemented. (eg. milestone id)"
-        # TODO: Implement
+            result = get_db().execute("SELECT t_id, t_title, t_description, t_status FROM todo WHERE t_p_project=?",
+                                      (project_id,)).fetchall()
+        elif milestone_id is not None:
+            result = get_db().execute("SELECT t_id, t_title, t_description, t_status FROM todo WHERE t_m_milestone=?",
+                                      (milestone_id,)).fetchall()
+        else:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
+                                  mimetype="application/json")
+        ret = []
+        for a in result:  # TODO: Return better timestamp things
+            ret.append({"id": a[0], "title": a[1], "description": a[2], "status": a[3]})
+        return json.dumps(ret)
+        # TODO: Test
 
     @app.route('/api/get_milestones', methods=['GET'])
     @flask_login.login_required
     def get_milestones():
-        print(flask.request.args.get("id"))
-        return "Not implemented."
-        # TODO: Implement
+        result = get_db().execute("SELECT * FROM milestone WHERE m_p_project=?",
+                                  (flask.request.args.get("project_id"),)).fetchall()
+        print(result)
+        ret = []
+        for a in result:
+            ret.append(
+                {"id": a[0], "title": a[1], "description": a[2], "starttime": a[3], "endtime": a[4], "status": a[6]})
+        return json.dumps(ret)
 
     @app.route('/api/get_projects', methods=['GET'])
     @flask_login.login_required
@@ -248,16 +279,15 @@ def main():
         return flask.send_from_directory('static', filename)
 
     @login_manager.user_loader  # should create user object (get from database etc), called when user object is needed
-    def user_loader(id):
+    def user_loader(user_id):
         print("=== user_loader ===")
-        userdb = get_db().execute("SELECT * FROM users WHERE u_id=?", (id,))
+        userdb = get_db().execute("SELECT u_id, u_name FROM users WHERE u_id=?", (user_id,))
         if userdb is None:
             return
         user_obj = userdb.fetchone()
         user = User()
-        user.name = user_obj[0]
-        user.id = user_obj[1]
-        user.access_token = user_obj[2]
+        user.id = user_obj[0]
+        user.name = user_obj[1]
 
         return user
 
