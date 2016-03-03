@@ -2,13 +2,13 @@
     <h2>Add new todo</h2>
     <md-input-container class="md-block">
         <label>Name</label>
-        <input ng-model="project_name">
+        <input ng-model="title">
     </md-input-container>
     <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="write">
             <md-input-container class="md-block">
                 <label>Description</label>
-                <textarea ng-model="project_description"></textarea>
+                <textarea ng-model="description"></textarea>
             </md-input-container>
         </md-tab>
         <md-tab label="preview">
@@ -27,7 +27,7 @@
     </md-input-container>-->
     <!--<label>Asignee</label>-->
     <md-autocomplete
-            md-selected-item="selectedItem"
+            md-selected-item="asignee"
             md-search-text-change="get_users(searchText)"
             md-search-text="searchText"
             md-items="user in users"
@@ -46,7 +46,7 @@
         <md-button class="md-raised" ng-click="cancel()">
             Cancel
         </md-button>
-        <md-button class="md-primary md-raised" ng-click="submit(title, description, selectedItem)"
+        <md-button class="md-primary md-raised" ng-click="submit(title, description, asignee.id, milestone)"
                    style="margin-right:20px;">
             Submit
         </md-button>

@@ -24,7 +24,7 @@
     border-radius: 10%;
 }
 
-.add-project-dialog {
+.add-project-dialog, .add-todo-dialog {
     min-width: 500px;
     margin: 10px;
 }

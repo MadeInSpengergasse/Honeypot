@@ -108,7 +108,7 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
                 targetEvent: ev,
                 clickOutsideToClose: true,
                 fullscreen: useFullScreen,
-                locals: {projects: $scope.projects}
+                locals: {todos: $scope.todos}
             });
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
@@ -116,16 +116,17 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    function AddTodoController($scope, $http, projects) {
+    function AddTodoController($scope, $http, todos) {
         console.log("addtodocontroller");
         $scope.cancel = function () {
             $mdDialog.hide()
         };
-        $scope.submit = function (title, description) {
-            $http.post("/api/add_todo", {"title": title, "description": description}).success(function (data) {
+        $scope.submit = function (title, description, asignee, milestone) {
+            console.log(title + " - " + description + " - " + asignee + " - " + milestone);
+            $http.post("/api/add_todo", {"title": title, "description": description, "asignee": asignee, "milestone": milestone}).success(function (data) {
                 console.log(data);
                 if (data.status == "ok") {
-                    projects.push({"title": title, "description": description, "status": 0, "id": data.id});
+                    todos.push({"title": title, "description": description, "status": 0, "id": data.id});
                     $mdDialog.hide()
                 } else {
                     alert("Error while adding project.");
@@ -134,7 +135,7 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
         };
         $scope.get_users = function(name) {
             console.log("get_users - " + name);
-            console.log("Selected: " + $scope.selectedItem);
+            console.log("Selected: " + $scope.selectedItem); // title description asignee milestone
             $http.get("/api/get_users", {params: {name: name}}).success(function(data) {
                 $scope.users = data;
                 console.log(data);
