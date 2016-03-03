@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS project (
   p_id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   p_title       TEXT,
   p_description TEXT,
-  p_status      INTEGER    NOT NULL
+  p_status      INTEGER NOT NULL
 );
 
 

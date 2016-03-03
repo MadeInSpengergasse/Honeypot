@@ -34,5 +34,7 @@
 /api/get_todos GET (for project / for milestone)
 /api/get_milestones GET (for project)
 /api/get_projects GET
+/api/get_project GET
+/api/get_users GET
 ```
 some label assign methods

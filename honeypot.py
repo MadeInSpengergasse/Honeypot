@@ -22,15 +22,15 @@ def create_database():
     db = sqlite3.connect("honeypot.sqlite")
     db.executescript(open("create_database.sql", "r").read())
     db.commit()
-#     print(db.execute("""
-# SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
-# (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
-# (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
-# (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
-# (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
-# t.t_p_project
-# FROM todo t, timestamp ts where t.t_id=?
-#     """).fetchall()[0])
+    #     print(db.execute("""
+    # SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
+    # (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
+    # (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
+    # (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
+    # (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
+    # t.t_p_project
+    # FROM todo t, timestamp ts where t.t_id=?
+    #     """).fetchall()[0])
     db.close()
 
 
@@ -130,7 +130,13 @@ def main():
     @app.route('/api/add_project', methods=['POST'])
     @flask_login.login_required
     def add_project():
-        return "Not implemented."
+        id = get_db().execute("INSERT INTO project (p_title, p_description, p_status) VALUES (?, ?, 0)",
+                              (flask.request.json.get("title"), flask.request.json.get("description"))).lastrowid
+        get_db().commit()
+        # flask.request.json.get("title")
+        # flask.request.json.get("description")
+        return flask.Response("{\"status\": \"ok\", \"id\": " + str(id) + "}", mimetype="application/json")
+        # return "Not implemented."
         # TODO: Implement
 
     # -------------------------- UPDATE --------------------------
@@ -222,7 +228,7 @@ def main():
             (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
             (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
             t.t_p_project
-            FROM todo t, timestamp ts where t.t_id=?
+            FROM todo t, timestamp ts WHERE t.t_id=?
         """, flask.request.args.get("id")).fetchone()
         ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
                "milestone": response[4], "status": response[5], "created": response[6], "createdby": response[7],
@@ -270,6 +276,30 @@ def main():
         ret = []
         for tupl in res:
             ret.append({"id": tupl[0], "title": tupl[1], "description": tupl[2], "status": tupl[3]})
+        return json.dumps(ret)
+
+    @app.route('/api/get_project', methods=['GET'])
+    @flask_login.login_required
+    def get_project():
+        res = get_db().execute("SELECT p_id, p_title, p_description, p_status FROM project WHERE p_id=?",
+                               (flask.request.args.get("project_id"),)).fetchone()
+        if res is None:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
+                                  mimetype="application/json")
+        ret = {"id": res[0], "title": res[1], "description": res[2], "status": res[3]}
+        return json.dumps(ret)
+
+    @app.route('/api/get_users', methods=['GET'])
+    @flask_login.login_required
+    def get_users():
+        if not flask.request.args.get("name"):
+            search = "%"
+        else:
+            search = "%"+flask.request.args.get("name")+"%"
+        res = get_db().execute("SELECT u_id, u_name FROM users WHERE u_name LIKE ? COLLATE nocase", (search,)).fetchall()
+        ret = []
+        for tupl in res:
+            ret.append({"id": tupl[0], "name": tupl[1]})
         return json.dumps(ret)
 
     # -------------------------- OTHER --------------------------

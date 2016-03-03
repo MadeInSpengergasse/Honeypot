@@ -1,18 +1,14 @@
 <div>
     <md-content>
-        <h1>Project Nr. {{ id }}</h1>
-        <p>Count: {{ todos.length }}</p>
+        <h1>{{project.title}}</h1>
+        <p markdown-to-html="project.description"></p>
         <md-button ng-click="add_todo()" class="md-raised md-primary">Add todo</md-button>
         <md-divider></md-divider>
-        <!--<div ng-repeat="todo in todos" style="border: 2px solid black;">
-            <h2><a href="#/project/{{ id }}/todo/{{ todo.id }}">{{ todo.title }}</a></h2>
-            <p>{{ todo.description }}</p>
-            <p>ID: {{ todo.id }}</p>
-            <p>Status: {{ todo.status }}</p>
-        </div>-->
         <md-list ng-repeat="todo in todos">
             <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}">
-                <div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">{{ status_strings[todo.status] }}</div>
+                <div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">{{
+                    status_strings[todo.status] }}
+                </div>
                 <p>{{ todo.title }}</p>
                 <p class="md-secondary">#{{ todo.id }}</p>
             </md-list-item>

@@ -59,7 +59,8 @@
     <md-toolbar layout="row" md-whiteframe="4">
         <!--<img src="images/logo.svg" style="height:49px; margin-top:5px; margin-left:10px;">-->
         <a href="#/" style="text-decoration: none; color: inherit;">
-            <img src="images/logo.svg" style="max-width: 100%; height: 50px; vertical-align: middle; margin-left: 5px;">
+            <!--<img src="images/logo.svg" style="max-width: 100%; height: 50px; vertical-align: middle; margin-left: 5px;">-->
+            <md-icon md-svg-src="images/logo.svg" class="honeypot-logo"></md-icon>
             <span style="line-height: 64px;">Honeypot</span>
         </a>
         <md-button class="projects-button" ng-show="user != null" ng-click="href('/projects')">Projects</md-button>
@@ -67,7 +68,7 @@
 
         <!--<md-button>About</md-button>-->
         <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
-        <img ng-show="user != null" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}" class="md-avatar profile-picture" alt="{{user.name}}">
+        <img ng-show="user != null" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?v=3&s=50" class="md-avatar profile-picture" alt="{{user.name}}">
         <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
         <!--https://avatars.githubusercontent.com/u/-->
     </md-toolbar>

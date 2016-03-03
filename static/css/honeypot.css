@@ -5,7 +5,6 @@
     margin-right: 8px;
 }
 
-
 .status-closed {
     background-color: #bc2b00;
 }
@@ -20,6 +19,24 @@
 
 .profile-picture {
     margin-top: 5px;
+    height: 45px;
+    width: 45px;
+    border-radius: 10%;
+}
+
+.add-project-dialog {
+    min-width: 500px;
+    margin: 10px;
+}
+
+.honeypot-logo {
     height: 50px;
     width: 50px;
+}
+
+.small-profile-picture {
+    height: 20px;
+    width: 20px;
+    border-radius: 10%;
+    vertical-align: middle;
 }
