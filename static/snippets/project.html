@@ -3,6 +3,7 @@
         <h1>{{project.title}}</h1>
         <p markdown-to-html="project.description"></p>
         <md-button ng-click="add_todo()" class="md-raised md-primary">Add todo</md-button>
+        <md-button ng-click='href("/project/"+id+"/milestones")' class="md-raised">Milestones</md-button>
         <md-divider></md-divider>
         <md-list ng-repeat="todo in todos">
             <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}">

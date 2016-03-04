@@ -4,6 +4,22 @@
         <label>Name</label>
         <input ng-model="title">
     </md-input-container>
+    <md-autocomplete
+            md-selected-item="asignee"
+            md-search-text-change="get_users(searchText)"
+            md-search-text="searchText"
+            md-items="user in users"
+            md-item-text="user.name"
+            md-floating-label="Asignee"
+            placeholder="Asignee">
+        <md-item-template>
+            <img ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?s=10" class="small-profile-picture">
+            <span md-highlight-text="searchText" md-highlight-flags="^i">{{user.name}}</span>
+        </md-item-template>
+        <md-not-found>
+            No user matching "{{ctrl.searchText}}" was found.
+        </md-not-found>
+    </md-autocomplete>
     <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="write">
             <md-input-container class="md-block">
@@ -16,32 +32,6 @@
             <p ng-show="project_description == null">Nothing to preview.</p>
         </md-tab>
     </md-tabs>
-    <!--<md-input-container class="md-block" flex-gt-sm>
-            <label>Asignee</label>
-            <md-select ng-model="selected_asignee">
-              <md-option ng-repeat="user in users" value="{{user.id}}">
-                {{user.name}}
-              </md-option>
-            </md-select>
-
-    </md-input-container>-->
-    <!--<label>Asignee</label>-->
-    <md-autocomplete
-            md-selected-item="asignee"
-            md-search-text-change="get_users(searchText)"
-            md-search-text="searchText"
-            md-items="user in users"
-            md-item-text="user.name"
-            <!--md-min-length="0"-->
-            placeholder="Asignee">
-        <md-item-template>
-            <img ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?s=10" class="small-profile-picture">
-            <span md-highlight-text="searchText" md-highlight-flags="^i">{{user.name}}</span>
-        </md-item-template>
-        <md-not-found>
-            No user matching "{{ctrl.searchText}}" was found.
-        </md-not-found>
-    </md-autocomplete>
     <md-dialog-actions layout="row">
         <md-button class="md-raised" ng-click="cancel()">
             Cancel
