@@ -106,14 +106,16 @@ def main():
     @flask_login.login_required
     def add_todo():
         params = flask.request.json
-        lastrow = get_db().execute("INSERT INTO timestamp (ts_u_id) VALUES (?)",
-                                   (flask_login.current_user.id,)).lastrowid
+        # lastrow = get_db().execute("INSERT INTO timestamp (ts_u_id) VALUES (?)",
+        #                            (flask_login.current_user.id,)).lastrowid
         id = get_db().execute(
-            "INSERT INTO todo (t_title, t_description, t_u_asignee, t_m_milestone, t_status, t_ts_created, t_p_project) VALUES (?, ?, ? , ?, ?, ?, ?)",
+            "INSERT INTO todo (t_title, t_description, t_u_asignee, t_m_milestone, t_status, t_p_project) VALUES (?, ?, ?, ?, ?, ?)",
             (params.get("title"), params.get("description"), params.get("asignee"), params.get("milestone"), 0,
-             lastrow, params.get("project_id"))).lastrowid
+             params.get("project_id"))).lastrowid
+        get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id) VALUES (?, ?, ?)",
+                         (0, flask_login.current_user.id, id))
         get_db().commit()
-        return flask.Response("{\"status\": \"ok\", \"id\": \""+str(id)+"\"}", mimetype="application/json")
+        return flask.Response("{\"status\": \"ok\", \"id\": \"" + str(id) + "\"}", mimetype="application/json")
 
     @app.route('/api/add_label', methods=['POST'])
     @flask_login.login_required
@@ -221,18 +223,26 @@ def main():
     @app.route('/api/get_todo_detail', methods=['GET'])
     @flask_login.login_required
     def get_details():
-        response = get_db().execute("""
-            SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
-            (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
-            (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
-            (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
-            (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
-            t.t_p_project
-            FROM todo t, timestamp ts WHERE t.t_id=?
-        """, (flask.request.args.get("id"),)).fetchone()
+        # response = get_db().execute("""
+        #     SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
+        #     (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
+        #     (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
+        #     (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
+        #     (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
+        #     t.t_p_project
+        #     FROM todo t, timestamp ts WHERE t.t_id=?
+        # """, (flask.request.args.get("id"),)).fetchone()
+        response = get_db().execute(
+            "SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status FROM todo t, timestamp ts WHERE t.t_id=?",
+            (flask.request.args.get("id"),)).fetchone()
+        # ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
+        #        "milestone": response[4], "status": response[5], "created": response[6], "createdby": response[7],
+        #        "closed": response[8], "closedby": response[9]}
+        if response is None:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
+                                  mimetype="application/json")
         ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
-               "milestone": response[4], "status": response[5], "created": response[6], "createdby": response[7],
-               "closed": response[8], "closedby": response[9]}
+               "milestone": response[4], "status": response[5]}
         return flask.Response(json.dumps(ret), mimetype="application/json")
         # return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
         #                       mimetype="application/json")
@@ -272,12 +282,14 @@ def main():
     @app.route('/api/get_milestone', methods=['GET'])
     @flask_login.login_required
     def get_milestone():
-        result = get_db().execute("SELECT m_title, m_description, m_starttime, m_endtime, m_status FROM milestone WHERE m_id=?",
-                                  (flask.request.args.get("milestone_id"),)).fetchone()
+        result = get_db().execute(
+            "SELECT m_title, m_description, m_starttime, m_endtime, m_status FROM milestone WHERE m_id=?",
+            (flask.request.args.get("milestone_id"),)).fetchone()
         if not result:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                                   mimetype="application/json")
-        return json.dumps({"title": result[0], "description": result[1], "starttime": result[2], "endtime": result[3], "status": result[4]})
+        return json.dumps({"title": result[0], "description": result[1], "starttime": result[2], "endtime": result[3],
+                           "status": result[4]})
 
     @app.route('/api/get_projects', methods=['GET'])
     @flask_login.login_required
@@ -305,8 +317,9 @@ def main():
         if not flask.request.args.get("name"):
             search = "%"
         else:
-            search = "%"+flask.request.args.get("name")+"%"
-        res = get_db().execute("SELECT u_id, u_name FROM users WHERE u_name LIKE ? COLLATE nocase", (search,)).fetchall()
+            search = "%" + flask.request.args.get("name") + "%"
+        res = get_db().execute("SELECT u_id, u_name FROM users WHERE u_name LIKE ? COLLATE nocase",
+                               (search,)).fetchall()
         ret = []
         for tupl in res:
             ret.append({"id": tupl[0], "name": tupl[1]})

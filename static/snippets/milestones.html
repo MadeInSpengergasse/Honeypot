@@ -1,5 +1,7 @@
 <div>
     <h2>Milestones for Project #{{project_id}}</h2>
+    <md-button ng-click="add_milestone()" class="md-raised md-primary">Add milestone</md-button>
+    <md-divider></md-divider>
     <div ng-repeat="milestone in milestones">
         <h4>{{milestone.title}}</h4>
         <p>Status: {{milestone.status}}</p>

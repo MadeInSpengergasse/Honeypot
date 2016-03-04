@@ -17,15 +17,6 @@ CREATE TABLE IF NOT EXISTS project (
   p_status      INTEGER NOT NULL
 );
 
-
-CREATE TABLE IF NOT EXISTS timestamp (
-  ts_id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  ts_u_id      INTEGER NOT NULL,
-  ts_timestamp DATETIME                     DEFAULT current_timestamp,
-
-  FOREIGN KEY (ts_u_id) REFERENCES users (u_id)
-);
-
 CREATE TABLE IF NOT EXISTS milestone (
   m_id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   m_title       TEXT,
@@ -63,9 +54,12 @@ CREATE TABLE IF NOT EXISTS todo_and_label (
 
 CREATE TABLE IF NOT EXISTS event (
   e_id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  e_type         INTEGER,
+  e_type         INTEGER NOT NULL,
   e_content      TEXT,
-  e_ts_timestamp INTEGER,
+  e_timestamp DATETIME DEFAULT current_timestamp,
+  e_u_id INTEGER NOT NULL,
+  e_t_id INTEGER NOT NULL,
 
-  FOREIGN KEY (e_ts_timestamp) REFERENCES timestamp (ts_id)
-)
+  FOREIGN KEY (e_u_id) REFERENCES users (u_id),
+  FOREIGN KEY (e_t_id) REFERENCES todo (t_id)
+);
