@@ -357,6 +357,9 @@ def main():
 
     # ACTUAL METHOD
     # ssl_context = ('server.crt', 'server.key')
+    if len(sys.argv) > 1 and sys.argv[1] == "test":
+        print("Finishing because of 'test' argument.")
+        return
     try:
         app.run(host='0.0.0.0',
                 port=5000,
