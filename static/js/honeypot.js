@@ -152,6 +152,13 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
                 $scope.users = data;
                 console.log(data);
             });
+        };
+        $scope.get_milestones = function(name) {
+            console.log("get_milestones - " + name);
+            $http.get("/api/get_milestones_by_name", {params: {name: name, project_id: project_id}}).success(function(data) {
+                $scope.milestones = data;
+                console.log(data);
+            });
         }
     }
 });
@@ -159,20 +166,86 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
 app.controller("TodoController", function ($scope, $routeParams, $http) {
     $scope.id = $routeParams.todo_id;
     $scope.project_id = $routeParams.project_id;
+    $scope.update_status_texts = ["Close todo", "Re-open todo"];
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function (data) {
         console.log(data);
         $scope.todo = data;
     });
+    $http.get("/api/get_events", {params: {id: $scope.id}}).success(function(data) {
+        console.log(data);
+        $scope.events = data;
+    });
+    $scope.update_status = function() {
+        console.log("update status");
+        var status = $scope.todo.status == 0 ? 1 : 0;
+        $http.post("/api/update_todo_status", {todo_id: $scope.id, status: status}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                $scope.todo.status = status;
+            }
+        });
+    };
+    $scope.submit_comment = function(comment) {
+        //console.log(comment);
+        $http.post("/api/add_comment", {content: comment, todo_id: $scope.id}).success(function(data) {
+            console.log(data);
+            if(data.status == "ok") {
+                comment = "";
+                $scope.events.push(data.new_comment);
+            }
+        });
+    }
 });
 
-app.controller("MilestonesController", function ($scope, $routeParams, $http) {
+app.controller("MilestonesController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog) {
     console.log("MilestonesController");
     $scope.project_id = $routeParams.project_id;
     $http.get("/api/get_milestones", {params: {project_id: $scope.project_id}}).success(function (data) {
         console.log(data);
         $scope.milestones = data;
-
     });
+    $scope.add_milestone = function (ev) {
+        console.log("addmilestone");
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
+        $mdDialog.show({
+            controller: AddMilestoneController,
+            templateUrl: 'snippets/add_milestone.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen,
+            locals: {milestones: $scope.milestones, project_id: $scope.project_id}
+        });
+        $scope.$watch(function () {
+            return $mdMedia('xs') || $mdMedia('sm');
+        }, function (wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+        });
+    };
+    function AddMilestoneController($scope, $http, project_id, milestones) {
+        console.log("addmilestonecontroller");
+        $scope.submit = function (title, description, startdate, enddate) {
+            console.log(title + " - " + description + " - " + startdate + " - " + enddate);
+            $http.post("/api/add_milestone", {
+                "title": title,
+                "description": description,
+                "startdate": startdate,
+                "enddate": enddate,
+                "project_id": project_id
+            }).success(function (data) {
+                console.log(data);
+                if (data.status == "ok") {
+                    milestones.push({"title": title, "description": description, "status": 0, "id": data.id});
+                    $mdDialog.hide()
+                } else {
+                    alert("Error while adding project.");
+                }
+            });
+        };
+        $scope.cancel = function () {
+            $mdDialog.hide()
+        };
+    }
 });
 
 app.controller("MilestoneController", function ($scope, $routeParams, $http) {
@@ -186,10 +259,10 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http) {
         var date = new Date(timestamp);
         return date.getShortMonthName() + " " + date.getDate() + ", " + date.getFullYear();
     };
-    $scope.timestamp_to_long_date = function(timestamp) {
+    $scope.timestamp_to_long_date = function (timestamp) {
         var date = new Date(timestamp);
         return date.getShortMonthName() + " " + date.getDate() + ", " + date.getFullYear() + ", " + ("0" + date.getUTCHours()).slice(-2) + ":" + ("0" + date.getUTCMinutes()).slice(-2);
-    }
+    };
 });
 
 Date.prototype.monthNames = [
@@ -203,5 +276,9 @@ Date.prototype.getMonthName = function () {
     return this.monthNames[this.getMonth()];
 };
 Date.prototype.getShortMonthName = function () {
-    return this.getMonthName().substr(0, 3);
+    var monthname = this.getMonthName();
+    if(monthname === undefined) {
+        return "";
+    }
+    return monthname.substr(0, 3);
 };

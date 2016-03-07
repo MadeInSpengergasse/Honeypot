@@ -126,8 +126,15 @@ def main():
     @app.route('/api/add_milestone', methods=['POST'])
     @flask_login.login_required
     def add_milestone():
-        return "Not implemented."
-        # TODO: Implement
+        params = flask.request.json
+        print(params.get("startdate"))
+        id = get_db().execute(
+            "INSERT INTO milestone (m_title, m_description, m_starttime, m_endtime, m_p_project, m_status) VALUES (?, ?, ?, ?, ?, ?)",
+            (params.get("title"), params.get("description"), params.get("startdate"), params.get("enddate"),
+             params.get("project_id"), 0)).lastrowid
+        get_db().commit()
+        return flask.Response("{\"status\": \"ok\", \"id\": \"" + str(id) + "\"}", mimetype="application/json")
+        # TODO: Test
 
     @app.route('/api/add_project', methods=['POST'])
     @flask_login.login_required
@@ -135,11 +142,16 @@ def main():
         id = get_db().execute("INSERT INTO project (p_title, p_description, p_status) VALUES (?, ?, 0)",
                               (flask.request.json.get("title"), flask.request.json.get("description"))).lastrowid
         get_db().commit()
-        # flask.request.json.get("title")
-        # flask.request.json.get("description")
         return flask.Response("{\"status\": \"ok\", \"id\": " + str(id) + "}", mimetype="application/json")
-        # return "Not implemented."
-        # TODO: Implement
+        # TODO: Test
+
+    @app.route('/api/add_comment', methods=['POST'])
+    @flask_login.login_required
+    def add_comment():
+        last = get_db().execute("INSERT INTO event (e_type, e_content, e_t_id, e_u_id) VALUES (?, ?, ?, ?)", (2, flask.request.json.get("content"), flask.request.json.get("todo_id"), flask_login.current_user.id)).lastrowid
+        get_db().commit()
+        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?", (last,)).fetchone()
+        return flask.Response("{\"status\": \"ok\", \"new_comment\": "+json.dumps({"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]})+"}", mimetype="application/json")
 
     # -------------------------- UPDATE --------------------------
 
@@ -148,17 +160,34 @@ def main():
     def update_todo():
         params = flask.request.json
         if params.get("status") == 1:  # close todo
-            lastrow = get_db().execute("INSERT INTO timestamp (ts_u_id) VALUES (?)",
-                                       (flask_login.current_user.id,)).lastrowid
-        elif params.get("status") == 0:
-            lastrow = None
+            get_db().execute("INSERT INTO event (e_t_id, e_u_id, e_type) VALUES (?, ?, ?)",
+                             (params.get("id"), flask_login.current_user.id, 1))
         else:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Invalid status.\"}",
                                   mimetype="application/json")
         get_db().execute(
-            "UPDATE todo SET t_title=?, t_description=?, t_u_asignee=?, t_m_milestone=?, t_status=?, t_ts_closed=? WHERE t_id=?",
+            "UPDATE todo SET t_title=?, t_description=?, t_u_asignee=?, t_m_milestone=?, t_status=? WHERE t_id=?",
             (params.get("title"), params.get("description"), params.get("asignee"), params.get("milestone"),
-             params.get("status"), lastrow, params.get("id")))
+             params.get("status"), params.get("id")))
+        get_db().commit()
+        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+        # TODO: Test
+
+    @app.route('/api/update_todo_status', methods=['POST'])
+    @flask_login.login_required
+    def update_todo_status():
+        new_status = flask.request.json.get("status")
+        todo_id = flask.request.json.get("todo_id")
+        print(new_status)
+        if new_status not in (0, 1):
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Invalid status.\"}",
+                                  mimetype="application/json")
+        current_status = get_db().execute("SELECT t_status FROM todo WHERE t_id=?", (todo_id,)).fetchone()
+        if current_status[0] is new_status:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Already same status.\"}",
+                                  mimetype="application/json")
+        get_db().execute("UPDATE todo SET t_status=? WHERE t_id=?", (new_status, todo_id))
+        get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id) VALUES (?, ?, ?)", (new_status, flask_login.current_user.id, todo_id))
         get_db().commit()
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
         # TODO: Test
@@ -186,18 +215,19 @@ def main():
     @app.route('/api/remove_todo', methods=['POST'])
     @flask_login.login_required
     def remove_todo():
-        timestamps = get_db().execute("SELECT t_ts_created, t_ts_closed FROM todo WHERE t_id=?",
-                                      (flask.request.json.get("id"),)).fetchall()
-        if not timestamps:
-            return flask.Response("{\"status\": \"error\", \"error_message\": \"Unknown id.\"}",
-                                  mimetype="application/json")
-        get_db().execute("DELETE FROM timestamp WHERE ts_id IN (?, ?)", timestamps[0])
-        rowcount = get_db().execute("DELETE FROM todo WHERE t_id=?", (flask.request.json.get("id"),)).rowcount
-        get_db().commit()
-        if rowcount != 1:
-            return flask.Response("{\"status\": \"error\", \"error_message\": \"Unknown id.\"}",
-                                  mimetype="application/json")
-        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+        # timestamps = get_db().execute("SELECT t_ts_created, t_ts_closed FROM todo WHERE t_id=?",
+        #                               (flask.request.json.get("id"),)).fetchall()
+        # if not timestamps:
+        #     return flask.Response("{\"status\": \"error\", \"error_message\": \"Unknown id.\"}",
+        #                           mimetype="application/json")
+        # get_db().execute("DELETE FROM timestamp WHERE ts_id IN (?, ?)", timestamps[0])
+        # rowcount = get_db().execute("DELETE FROM todo WHERE t_id=?", (flask.request.json.get("id"),)).rowcount
+        # get_db().commit()
+        # if rowcount != 1:
+        #     return flask.Response("{\"status\": \"error\", \"error_message\": \"Unknown id.\"}",
+        #                           mimetype="application/json")
+        # return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+        return "Not implemented. (need to reimplement"
         # TODO: Test
 
     @app.route('/api/remove_label', methods=['POST'])
@@ -223,29 +253,16 @@ def main():
     @app.route('/api/get_todo_detail', methods=['GET'])
     @flask_login.login_required
     def get_details():
-        # response = get_db().execute("""
-        #     SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
-        #     (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
-        #     (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
-        #     (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
-        #     (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
-        #     t.t_p_project
-        #     FROM todo t, timestamp ts WHERE t.t_id=?
-        # """, (flask.request.args.get("id"),)).fetchone()
+        # TODO: get asignee name (subselect)
         response = get_db().execute(
-            "SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status FROM todo t, timestamp ts WHERE t.t_id=?",
+            "SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status FROM todo t WHERE t.t_id=?",
             (flask.request.args.get("id"),)).fetchone()
-        # ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
-        #        "milestone": response[4], "status": response[5], "created": response[6], "createdby": response[7],
-        #        "closed": response[8], "closedby": response[9]}
         if response is None:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                                   mimetype="application/json")
         ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
                "milestone": response[4], "status": response[5]}
         return flask.Response(json.dumps(ret), mimetype="application/json")
-        # return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
-        #                       mimetype="application/json")
 
     @app.route('/api/get_todos', methods=['GET'])
     @flask_login.login_required
@@ -262,7 +279,7 @@ def main():
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                                   mimetype="application/json")
         ret = []
-        for a in result:  # TODO: Return better timestamp things
+        for a in result:
             ret.append({"id": a[0], "title": a[1], "description": a[2], "status": a[3]})
         return json.dumps(ret)
         # TODO: Test
@@ -272,6 +289,22 @@ def main():
     def get_milestones():
         result = get_db().execute("SELECT m_id, m_title, m_status FROM milestone WHERE m_p_project=?",
                                   (flask.request.args.get("project_id"),)).fetchall()
+        print(result)
+        ret = []
+        for a in result:
+            ret.append(
+                {"id": a[0], "title": a[1], "status": a[2]})
+        return json.dumps(ret)\
+
+    @app.route('/api/get_milestones_by_name', methods=['GET'])
+    @flask_login.login_required
+    def get_milestones_by_name():
+        if not flask.request.args.get("name"):
+            search = "%"
+        else:
+            search = "%" + flask.request.args.get("name") + "%"
+        result = get_db().execute("SELECT m_id, m_title, m_status FROM milestone WHERE m_p_project=? AND m_title LIKE ? COLLATE nocase",
+                                  (flask.request.args.get("project_id"), search)).fetchall()
         print(result)
         ret = []
         for a in result:
@@ -324,6 +357,21 @@ def main():
         for tupl in res:
             ret.append({"id": tupl[0], "name": tupl[1]})
         return json.dumps(ret)
+
+    @app.route('/api/get_events', methods=['GET'])
+    @flask_login.login_required
+    def get_events():
+        results = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_t_id=? ORDER BY e_timestamp", (flask.request.args.get("id"),)).fetchall()
+        if results is None:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
+                                  mimetype="application/json")
+        ret = []
+        index = 0
+        for a in results:
+            ret.append({"type": a[0], "user": a[1], "content": a[2], "timestamp": a[3], "index": index})
+            index += 1
+        return json.dumps(ret)
+        # TODO: Test
 
     # -------------------------- OTHER --------------------------
 
@@ -379,32 +427,3 @@ def get_db():
 if __name__ == '__main__':
     create_database()
     main()
-
-    # db.execute("""
-    #     CREATE TABLE IF NOT EXISTS users (
-    #         id TEXT,
-    #         name TEXT,
-    #         access_token TEXT,
-    #         PRIMARY KEY (id)
-    #     )
-    # """)
-    # db.execute("""
-    #     CREATE TABLE IF NOT EXISTS todo (
-    #         t_id            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    #         t_title         TEXT NOT NULL,
-    #         t_description   TEXT NOT NULL,
-    #         t_u_asignee     INTEGER,
-    #         t_m_milestone   INTEGER,
-    #         t_status        INTEGER NOT NULL,
-    #         t_p_project     INTEGER NOT NULL,
-    #         t_ts_created    INTEGER NOT NULL,
-    #         t_ts_closed     INTEGER
-    #     );
-    # """)
-    # db.execute("""
-    #     CREATE TABLE IF NOT EXISTS timestamp (
-    #         ts_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    #         ts_u_id INTEGER NOT NULL,
-    #         ts_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    #     )
-    # """)

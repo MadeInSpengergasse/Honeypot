@@ -2,8 +2,19 @@
     <h2>Milestones for Project #{{project_id}}</h2>
     <md-button ng-click="add_milestone()" class="md-raised md-primary">Add milestone</md-button>
     <md-divider></md-divider>
-    <div ng-repeat="milestone in milestones">
+    <!--<div ng-repeat="milestone in milestones">
         <h4>{{milestone.title}}</h4>
         <p>Status: {{milestone.status}}</p>
-    </div>
+    </div>-->
+    <md-list>
+            <div ng-repeat="milestone in milestones">
+                <md-list-item ng-href="#/project/{{ project_id }}/milestone/{{ milestone.id }}">
+                    <div class="status" ng-class="milestone.status == 0 ? 'status-open' : 'status-closed'">{{
+                        status_strings[milestone.status] }}
+                    </div>
+                    <p> {{ milestone.title }} </p>
+                    <p class="md-secondary">#{{ milestone.id }}</p>
+                </md-list-item>
+            </div>
+        </md-list>
 </div>

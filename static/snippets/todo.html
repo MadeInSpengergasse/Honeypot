@@ -3,11 +3,27 @@
     <h2>{{ todo.title }}</h2>
     <p>Todo Nr. {{ id }}</p>
     <p markdown-to-html="todo.description"></p>
-    <p>Status: {{ todo.status }}</p>
-    <p>Created by: {{ todo.createdby }}</p>
-    <p>Date created: {{ todo.created }}</p>
-    <p>Closed by: {{ todo.closedby }}</p>
-    <p>Date closed: {{ todo.closed }}</p>
-    <p>Milestone: {{ todo.milestone }}</p>
+    <p>Status: {{ status_strings[todo.status] }}</p>
+    <p>Milestone: <a href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone }}</a></p>
     <p>Asignee: {{ todo.asignee }}</p>
+    <h2>Events</h2>
+    <div class="events" ng-repeat="event in events">
+        <p ng-if="event.type == 0">opened by {{event.user}}</p>
+        <p ng-if="event.type == 1">closed by {{event.user}}</p>
+        <p ng-if="event.type == 2">comment by {{event.user}}, content: {{event.content}}</p>
+    </div>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="write">
+            <md-input-container class="md-block">
+                <label>Comment</label>
+                <textarea ng-model="comment"></textarea>
+            </md-input-container>
+        </md-tab>
+        <md-tab label="preview">
+            <p ng-show="comment != null" markdown-to-html="comment"></p>
+            <p ng-show="comment == null">Nothing to preview.</p>
+        </md-tab>
+    </md-tabs>
+    <md-button ng-click="submit_comment(comment)" class="md-raised md-primary">Submit Comment</md-button>
+    <md-button ng-click="update_status()" class="md-raised">{{update_status_texts[todo.status]}}</md-button>
 </div>

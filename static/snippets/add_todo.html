@@ -17,7 +17,22 @@
             <span md-highlight-text="searchText" md-highlight-flags="^i">{{user.name}}</span>
         </md-item-template>
         <md-not-found>
-            No user matching "{{ctrl.searchText}}" was found.
+            No user matching "{{searchText}}" was found.
+        </md-not-found>
+    </md-autocomplete>
+    <md-autocomplete
+            md-selected-item="milestone"
+            md-search-text-change="get_milestones(milestone_searchText)"
+            md-search-text="milestone_searchText"
+            md-items="milestone in milestones"
+            md-item-text="milestone.title"
+            md-floating-label="Milestone"
+            placeholder="Milestone">
+        <md-item-template>
+            <span md-highlight-text="milestone_searchText" md-highlight-flags="^i">{{milestone.title}}</span>
+        </md-item-template>
+        <md-not-found>
+            No milestone matching "{{milestone_searchText}}" was found.
         </md-not-found>
     </md-autocomplete>
     <md-tabs md-dynamic-height md-border-bottom>
@@ -28,18 +43,16 @@
             </md-input-container>
         </md-tab>
         <md-tab label="preview">
-            <p ng-show="project_description != null" markdown-to-html="project_description"></p>
-            <p ng-show="project_description == null">Nothing to preview.</p>
+            <p ng-show="description != null" markdown-to-html="description"></p>
+            <p ng-show="description == null">Nothing to preview.</p>
         </md-tab>
     </md-tabs>
     <md-dialog-actions layout="row">
         <md-button class="md-raised" ng-click="cancel()">
             Cancel
         </md-button>
-        <md-button class="md-primary md-raised" ng-click="submit(title, description, asignee.id, milestone)"
-                   style="margin-right:20px;">
+        <md-button class="md-primary md-raised" ng-click="submit(title, description, asignee.id, milestone)">
             Submit
         </md-button>
     </md-dialog-actions>
-    <!--<md-datepicker ng-model="user.submissionDate" md-placeholder="Enter date">-->
 </div>

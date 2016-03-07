@@ -8,3 +8,10 @@ install: "pip install -r requirements.txt"
 script:
 - cp config.DEFAULT.py config.py
 - python honeypot.py test
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/eeffbf4b0a64c685f04d
+    on_success: always
+    on_failure: always
+    on_start: never

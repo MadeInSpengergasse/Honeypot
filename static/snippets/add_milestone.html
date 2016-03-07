@@ -1,0 +1,31 @@
+<div class="add-milestone-dialog">
+    <h2>Add new milestone</h2>
+    <md-input-container class="md-block">
+        <label>Name</label>
+        <input ng-model="milestone_name">
+    </md-input-container>
+    <h4>Startdate</h4>
+    <md-datepicker ng-model="milestone_startdate" md-placeholder="Enter date"></md-datepicker>
+    <h4>Enddate</h4>
+    <md-datepicker ng-model="milestone_enddate" md-placeholder="Enter date"></md-datepicker>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="write">
+            <md-input-container class="md-block">
+                <label>Description</label>
+                <textarea ng-model="milestone_description"></textarea>
+            </md-input-container>
+        </md-tab>
+        <md-tab label="preview">
+            <p ng-show="milestone_description != null" markdown-to-html="milestone_description"></p>
+            <p ng-show="milestone_description == null">Nothing to preview.</p>
+        </md-tab>
+    </md-tabs>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-primary md-raised" ng-click="submit(milestone_name, milestone_description, milestone_startdate, milestone_enddate)">
+            Submit
+        </md-button>
+    </md-dialog-actions>
+</div>
