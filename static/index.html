@@ -28,6 +28,7 @@
             <span class="honeypot-span">Honeypot</span>
         </a>
         <md-button class="projects-button" ng-show="user != null" ng-click="href('/projects')">Projects</md-button>
+        <md-button class="labels-button" ng-show="user != null" ng-click="href('/labels')">Labels</md-button>
         <div flex></div>
         <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
         <img ng-show="user != null" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?v=3&s=50"

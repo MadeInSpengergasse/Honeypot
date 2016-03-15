@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="dataSourceStorageLocal">
-    <data-source name="Sqlite (Xerial) - honeypot.sqlite" uuid="f1d91a9c-8940-4a3e-812f-a10d6162c83c">
-      <secret-storage>master_key</secret-storage>
-      <auth-required>false</auth-required>
-    </data-source>
-  </component>
-</project>

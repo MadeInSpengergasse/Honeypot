@@ -40,3 +40,9 @@ p_status (closed?)
 ts_id (unique id)
 ts_u_id (user who did that)
 ts_timestamp (when it happened)
+
+### Event
+e_id
+e_type INTEGER (0=opened, 1=closed, 2=comment)
+e_content TEXT (comment content)
+e_ts_timestamp INTEGER

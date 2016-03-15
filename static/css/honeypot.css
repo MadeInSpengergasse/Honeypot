@@ -1,8 +1,13 @@
-.status {
+.status, .label {
     padding: 4px 8px;
     color: #fff;
     border-radius: 3px;
     margin-right: 8px;
+}
+
+.label {
+    width: 10em;
+    text-align: center;
 }
 
 .status-closed {
@@ -24,7 +29,7 @@
     border-radius: 10%;
 }
 
-.add-project-dialog, .add-todo-dialog, .add-milestone-dialog {
+.add-project-dialog, .add-todo-dialog, .add-milestone-dialog, .add-label-dialog {
     min-width: 500px;
     margin: 10px;
 }
@@ -51,4 +56,19 @@
 
 .main-insert-view {
     margin: 30px;
+}
+
+.add-todo-dialog {
+    fill: #ff00ff;
+}
+
+.open-svg {
+    fill: #ff00ff;
+}
+
+.event-icons {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-right: 5px;
+    -webkit-user-select: none;
 }

@@ -3,4 +3,6 @@
     <time datetime="{{milestone.starttime}}" title="{{timestamp_to_long_date(milestone.starttime)}}">{{timestamp_to_date(milestone.starttime)}}</time>
     <br>
     <time datetime="{{milestone.endtime}}">{{timestamp_to_date(milestone.endtime)}}</time>
+    <br><br>
+    <md-button class="md-raised" ng-click="remove_milestone()">Remove</md-button>
 </div>

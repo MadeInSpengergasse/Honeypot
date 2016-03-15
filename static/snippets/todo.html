@@ -5,13 +5,29 @@
     <p markdown-to-html="todo.description"></p>
     <p>Status: {{ status_strings[todo.status] }}</p>
     <p>Milestone: <a href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone }}</a></p>
-    <p>Asignee: {{ todo.asignee }}</p>
+    <p>Asignee: {{ users[todo.asignee].name }}</p>
+    <md-divider></md-divider>
+    <h2>Labels</h2>
+    <div ng-repeat="label in assigned_labels">
+        <p class="label" ng-style="{'background-color': labels[label].color}">{{labels[label].name}}</p>
+    </div>
+    <p ng-hide="assigned_labels.length">No label assigned.</p>
+    <md-divider></md-divider>
     <h2>Events</h2>
     <div class="events" ng-repeat="event in events">
-        <p ng-if="event.type == 0">opened by {{event.user}}</p>
-        <p ng-if="event.type == 1">closed by {{event.user}}</p>
-        <p ng-if="event.type == 2">comment by {{event.user}}, content: {{event.content}}</p>
+        <div ng-if="event.type == 0">
+            <p><i class="material-icons event-icons">check_box_outline_blank</i>opened by {{users[event.user].name}}</p>
+        </div>
+
+        <div ng-if="event.type == 1">
+            <p><i class="material-icons event-icons">check_box</i>closed by {{users[event.user].name}}</p>
+        </div>
+
+        <div ng-if="event.type == 2">
+            <p><i class="material-icons event-icons">comment</i>comment by {{users[event.user].name}}, content: <div markdown-to-html="event.content"></div></p>
+        </div>
     </div>
+    <p ng-hide="events.length">No event found.</p>
     <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="write">
             <md-input-container class="md-block">

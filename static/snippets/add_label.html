@@ -1,0 +1,23 @@
+<div class="add-label-dialog">
+    <h2>Add new label</h2>
+    <md-input-container class="md-block">
+        <label>Name</label>
+        <input ng-model="label_name" required>
+    </md-input-container>
+    <md-input-container class="md-block">
+        <label>Color</label>
+        <md-icon md-svg-src="images/color.svg" ng-style=" {'fill': valid_color}"></md-icon>
+        <input ng-model="label_color" ng-change="update_color(label_color)" ng-pattern="/#\b[0-9A-F]{6}\b/gi" required>
+        <div ng-messages="label_color.$error" role="alert">
+            <div ng-message="pattern">Please enter a string in the form of '#FF00FF'</div>
+        </div>
+    </md-input-container>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="cancel()">
+            Cancel
+        </md-button>
+        <md-button class="md-primary md-raised" ng-click="submit(label_name, label_color)">
+            Submit
+        </md-button>
+    </md-dialog-actions>
+</div>

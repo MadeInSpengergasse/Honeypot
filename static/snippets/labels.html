@@ -1,0 +1,17 @@
+<div ng-controller="LabelController">
+    <h2>Labels</h2>
+    <md-button ng-click="add_label()" class="md-raised md-primary">Add Label</md-button>
+    </md-divider>
+    <table ng-repeat="label in labels">
+
+            <!--<label>{{label.name}}</label>-->
+            <!--<md-icon md-svg-src="images/color.svg" ng-style="{'color': label.color}"></md-icon>-->
+            <tr>
+                <td><p class="label" ng-style="{'background-color': label.color}">{{label.name}}</p></td>
+                <td>
+                    <md-button class="md-raised" ng-click="remove_label(label.id)">Remove</md-button>
+                </td>
+            </tr>
+    </table>
+
+</div>

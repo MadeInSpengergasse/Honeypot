@@ -8,7 +8,7 @@
             md-selected-item="asignee"
             md-search-text-change="get_users(searchText)"
             md-search-text="searchText"
-            md-items="user in users"
+            md-items="user in users_filtered"
             md-item-text="user.name"
             md-floating-label="Asignee"
             placeholder="Asignee">
@@ -51,7 +51,7 @@
         <md-button class="md-raised" ng-click="cancel()">
             Cancel
         </md-button>
-        <md-button class="md-primary md-raised" ng-click="submit(title, description, asignee.id, milestone)">
+        <md-button class="md-primary md-raised" ng-click="submit(title, description, asignee.id, milestone.id)">
             Submit
         </md-button>
     </md-dialog-actions>
