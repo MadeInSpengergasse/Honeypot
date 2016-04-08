@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="honeypotApp">
 <head>
+	<meta charset="UTF-8">
+    <title>Honeypot</title>
+	<link rel="icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96 128x128 192x192" href="/images/favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#37474F">
+	<meta name="msapplication-navbutton-color" content="#37474F"/>
+	
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
 	<link rel="stylesheet" href="/bower_components/md-color-picker/dist/mdColorPicker.min.css" />
@@ -17,14 +24,11 @@
 	<script src="/bower_components/md-color-picker/dist/mdColorPicker.min.js"></script>
     <script src="/bower_components/angular-crumble/crumble.js"></script>
 
-    <script src="js/honeypot.js"></script>
+    <script src="/js/honeypot.js"></script>
     <link rel="stylesheet" href="/css/honeypot.css" type="text/css">
-
-    <meta charset="UTF-8">
-    <title>Honeypot</title>
 </head>
 <body>
-<div ng-controller="AppCtrl" layout="column" style="height:100%;" ng-cloak>
+<div id="wrapper" ng-controller="AppCtrl" layout="column" ng-cloak>
   <section layout="row" flex>
     <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop md-whiteframe="4">
 	  <header class="nav-header">
@@ -76,5 +80,11 @@
 	</div>
   </section>
 </div>
+<noscript>
+  <div id="noscript-warning">
+	<p>This website will not work properly due to JavaScript being disabled.</p>
+	<p>If this hasn't been done on purpose, you can <a href="http://www.enable-javascript.com/" target="_blank">find instructions on how to enable it here</a>.</p>
+  </div>
+</noscript>
 </body>
 </html>
