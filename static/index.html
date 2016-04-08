@@ -14,28 +14,63 @@
     <script src="/bower_components/ng-showdown/dist/ng-showdown.min.js"></script>
 
     <script src="js/honeypot.js"></script>
-    <link rel="stylesheet" href="css/honeypot.css">
+    <link rel="stylesheet" href="/css/honeypot.css" type="text/css">
 
     <meta charset="UTF-8">
     <title>Honeypot</title>
-    <!-- <link rel="icon" type="image/png" href="favicon.png"/> -->
 </head>
 <body>
-<div ng-controller="HeaderController">
-    <md-toolbar layout="row" md-whiteframe="4">
-        <a href="#/" class="a-logo">
-            <md-icon md-svg-src="images/logo.svg" class="honeypot-logo"></md-icon>
-            <span class="honeypot-span">Honeypot</span>
+<div ng-controller="AppCtrl" layout="column" style="height:100%;" ng-cloak>
+  <section layout="row" flex>
+    <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop md-whiteframe="4">
+	  <header class="nav-header">
+        <a ng-href="/#/" class="docs-logo">
+          <img src="images/logo.svg" alt="" />
+          <span class="docs-logotype">Honeypot</span>
         </a>
-        <md-button class="projects-button" ng-show="user != null" ng-click="href('/projects')">Projects</md-button>
-        <md-button class="labels-button" ng-show="user != null" ng-click="href('/labels')">Labels</md-button>
-        <div flex></div>
-        <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
-        <img ng-show="user != null" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?v=3&s=50"
-             class="md-avatar profile-picture" alt="{{user.name}}">
-        <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
-    </md-toolbar>
+	  </header>
+      <md-content>
+		<div class="nav-menu">
+		  <md-list>
+			<md-list-item ng-show="user == null">
+			  <p>Please login first.</p>
+			</md-list-item>
+			<md-list-item ng-show="user != null" ng-click="href('/projects')">
+			  <md-icon class="md-avatar-icon">folder_shared</md-icon>
+			  <p>Projects</p>
+			</md-list-item>
+			<md-list-item ng-show="user != null" ng-click="href('/teammembers')">
+			  <md-icon class="md-avatar-icon">people</md-icon>
+			  <p>Teammembers</p>
+			</md-list-item>
+			<md-list-item ng-show="user != null" ng-click="href('/labels')">
+			  <md-icon class="md-avatar-icon">label</md-icon>
+			  <p>Labels</p>
+			</md-list-item>
+		  </md-list>
+		</div>
+      </md-content>
+    </md-sidenav>
+    <div layout="column" layout-fill>
+	  <md-toolbar ng-controller="HeaderController">
+		<div class="md-toolbar-tools">
+		  <md-button hide-gt-md class="md-icon-button mdb-noeggfix" aria-label="Settings" ng-click="toggleLeft()">
+			<md-icon class="md-avatar-icon">menu</md-icon>
+          </md-button>
+		  <span class="toolbar-title">Projects > Honeypot > Todo > Dynamische Titel hinzufügen!</span>
+		  <span flex></span><!-- fill up the space between left and right area -->
+		  <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
+		  <md-button ng-show="user != null" title="{{user.name}}" ng-click="href('/profile')" aria-label="Profile picture" class="md-icon-button launch mdb-noeggfix">
+			<img class="user-avatar" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?v=3">
+		  </md-button>
+		  <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
+		</div>
+	  </md-toolbar>
+	  <md-content>
+		<div ng-view class="main-insert-view"></div>
+	  </md-content>
+	</div>
+  </section>
 </div>
-<div ng-view class="main-insert-view"></div>
 </body>
 </html>
