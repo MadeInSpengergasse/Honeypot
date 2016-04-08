@@ -6,11 +6,7 @@
     </md-input-container>
     <md-input-container class="md-block">
         <label>Color</label>
-        <md-icon md-svg-src="images/color.svg" ng-style=" {'fill': valid_color}"></md-icon>
-        <input ng-model="label_color" ng-change="update_color(label_color)" ng-pattern="/#\b[0-9A-F]{6}\b/gi" required>
-        <div ng-messages="label_color.$error" role="alert">
-            <div ng-message="pattern">Please enter a string in the form of '#FF00FF'</div>
-        </div>
+        <div md-color-picker ng-model="label_color"></div>
     </md-input-container>
     <md-dialog-actions layout="row">
         <md-button class="md-raised" ng-click="cancel()">

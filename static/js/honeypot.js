@@ -1,11 +1,12 @@
-var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ng-showdown']);
+var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ng-showdown', 'mdColorPicker', 'crumble']);
 
-app.config(function ($routeProvider,$mdThemingProvider) {
+app.config(function ($routeProvider, $mdThemingProvider) {
     $routeProvider.when('/', {
-        templateUrl: "/snippets/home.html"
+        templateUrl: "/snippets/home.html",
+        label: "Home"
     }).when('/project/:project_id', {
         template: '<ng-include src="\'snippets/project.html\'">',
-        controller: 'ProjectController'
+        controller: 'ProjectController',
     }).when('/project/:project_id/milestones', {
         template: '<ng-include src="\'snippets/milestones.html\'">',
         controller: 'MilestonesController'
@@ -17,75 +18,81 @@ app.config(function ($routeProvider,$mdThemingProvider) {
         controller: 'TodoController'
     }).when('/:templatePath', {
         template: '<ng-include src="templatePath" />',
-        controller: 'CatchAllCtrl'
+        controller: 'CatchAllCtrl',
+        label: '{{title}}'
     });
-	
-	$mdThemingProvider.theme('default').primaryPalette('blue-grey', {
-      'default': '800', // by default use shade 800 from the blue-grey palette for primary intentions
-      //'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
-      //'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
-      //'hue-3': '300' // use shade A100 for the <code>md-hue-3</code> class
+
+    $mdThemingProvider.theme('default').primaryPalette('blue-grey', {
+        'default': '800', // by default use shade 800 from the blue-grey palette for primary intentions
+        //'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
+        //'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
+        //'hue-3': '300' // use shade A100 for the <code>md-hue-3</code> class
     }).accentPalette('orange', {
-      'default': '500' // use shade 500 for default, and keep all other shades the same
+        'default': '500' // use shade 500 for default, and keep all other shades the same
     });
 });
 
-app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log){
+app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log, crumble) {
+    $scope.crumble = crumble;
+
     $scope.toggleLeft = buildDelayedToggler('left');
     /**
      * Supplies a function that will continue to operate until the
      * time is up.
      */
     function debounce(func, wait, context) {
-      var timer;
-      return function debounced() {
-        var context = $scope,
-            args = Array.prototype.slice.call(arguments);
-        $timeout.cancel(timer);
-        timer = $timeout(function() {
-          timer = undefined;
-          func.apply(context, args);
-        }, wait || 10);
-      };
+        var timer;
+        return function debounced() {
+            var context = $scope,
+                args = Array.prototype.slice.call(arguments);
+            $timeout.cancel(timer);
+            timer = $timeout(function () {
+                timer = undefined;
+                func.apply(context, args);
+            }, wait || 10);
+        };
     }
+
     /**
      * Build handler to open/close a SideNav; when animation finishes
      * report completion in console
      */
     function buildDelayedToggler(navID) {
-      return debounce(function() {
-        $mdSidenav(navID)
-          .toggle()
-          .then(function () {
-            $log.debug("toggle " + navID + " is done");
-          });
-      }, 200);
+        return debounce(function () {
+            $mdSidenav(navID)
+                .toggle()
+                .then(function () {
+                    $log.debug("toggle " + navID + " is done");
+                });
+        }, 200);
     }
+
     function buildToggler(navID) {
-      return function() {
-        $mdSidenav(navID)
-          .toggle()
-          .then(function () {
-            $log.debug("toggle " + navID + " is done");
-          });
-      }
+        return function () {
+            $mdSidenav(navID)
+                .toggle()
+                .then(function () {
+                    $log.debug("toggle " + navID + " is done");
+                });
+        }
     }
-  });
+});
 
 app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
     $scope.close = function () {
-      $mdSidenav('left').close()
-        .then(function () {
-          $log.debug("close LEFT is done");
+        $mdSidenav('left').close().then(function () {
+            $log.debug("close LEFT is done");
         });
     };
-  });
+});
 
 
 /* Luca's stuff */
 /*--------------*/
-app.controller("CatchAllCtrl", function ($scope, $routeParams) {
+app.controller("CatchAllCtrl", function ($scope, $routeParams, crumble) {
+    console.log("CatchAll");
     $scope.templatePath = "snippets/" + $routeParams.templatePath + ".html";
+    crumble.update({title: $routeParams.templatePath});
 });
 
 app.controller("HeaderController", function ($rootScope, $scope, $http, $location) {
@@ -99,9 +106,9 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
             $rootScope.user = data.user;
         }
     });
-    $http.get("/api/get_users").success(function(data) {
+    $http.get("/api/get_users").success(function (data) {
         var arr = [];
-        data.forEach(function(value) {
+        data.forEach(function (value) {
             arr[value.id] = value;
         });
         $rootScope.users = arr;
@@ -117,10 +124,10 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
     };
     $rootScope.goto = function (url) {
         window.location.href = url;
-    }
+    };
 });
 
-app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedia) {
+app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedia, crumble) {
     $http.get("/api/get_projects").success(function (data) {
         console.log(data);
         $scope.projects = data;
@@ -166,11 +173,16 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
     }
 });
 
-app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location) {
+app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location, crumble) {
+    crumble.update({title: "asdakjshda"});
     $scope.id = $routeParams.project_id;
     $http.get("/api/get_project", {params: {project_id: $routeParams.project_id}}).success(function (data) {
+        // console.log({title: data.title});
+        var test = data.title;
+        // crumble.update({title: "Projects"});
         $scope.project = data;
     });
+    // crumble.update({title: "title"});
     $http.get("/api/get_todos", {params: {project_id: $routeParams.project_id}}).success(function (data) {
         console.log(data);
         $scope.todos = data;
@@ -192,8 +204,8 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    $scope.remove_project = function() {
-        $http.post("/api/remove_project", {project_id: $scope.id}).success(function(data) {
+    $scope.remove_project = function () {
+        $http.post("/api/remove_project", {project_id: $scope.id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
                 $location.path("/projects");
@@ -209,7 +221,7 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
         };
         $scope.submit = function (title, description, asignee, milestone) {
             console.log(title + " - " + description + " - " + asignee + " - " + milestone);
-            if(description == null) {
+            if (description == null) {
                 description = "";
             }
             $http.post("/api/add_todo", {
@@ -236,9 +248,14 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
                 console.log(data);
             });
         };
-        $scope.get_milestones = function(name) {
+        $scope.get_milestones = function (name) {
             console.log("get_milestones - " + name);
-            $http.get("/api/get_milestones_by_name", {params: {name: name, project_id: project_id}}).success(function(data) {
+            $http.get("/api/get_milestones_by_name", {
+                params: {
+                    name: name,
+                    project_id: project_id
+                }
+            }).success(function (data) {
                 $scope.milestones = data;
                 console.log(data);
             });
@@ -254,25 +271,25 @@ app.controller("TodoController", function ($scope, $routeParams, $http) {
         console.log(data);
         $scope.todo = data;
     });
-    $http.get("/api/get_events", {params: {id: $scope.id}}).success(function(data) {
+    $http.get("/api/get_events", {params: {id: $scope.id}}).success(function (data) {
         console.log(data);
         $scope.events = data;
     });
-    $http.get("/api/get_assigned_labels", {params: {id: $scope.id}}).success(function(data) {
+    $http.get("/api/get_assigned_labels", {params: {id: $scope.id}}).success(function (data) {
         $scope.assigned_labels = data;
         console.log(data);
     });
-    $http.get("/api/get_labels").success(function(data) {
+    $http.get("/api/get_labels").success(function (data) {
         var arr = [];
-        data.forEach(function(entry) {
+        data.forEach(function (entry) {
             arr[entry.id] = entry;
         });
         $scope.labels = arr;
     });
-    $scope.update_status = function() {
+    $scope.update_status = function () {
         console.log("update status");
         var status = $scope.todo.status == 0 ? 1 : 0;
-        $http.post("/api/update_todo_status", {todo_id: $scope.id, status: status}).success(function(data) {
+        $http.post("/api/update_todo_status", {todo_id: $scope.id, status: status}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
                 $scope.todo.status = status;
@@ -280,10 +297,10 @@ app.controller("TodoController", function ($scope, $routeParams, $http) {
             }
         });
     };
-    $scope.submit_comment = function(comment) {
-        $http.post("/api/add_comment", {content: comment, todo_id: $scope.id}).success(function(data) {
+    $scope.submit_comment = function (comment) {
+        $http.post("/api/add_comment", {content: comment, todo_id: $scope.id}).success(function (data) {
             console.log(data);
-            if(data.status == "ok") {
+            if (data.status == "ok") {
                 comment = "";
                 $scope.events.push(data.new_comment);
             }
@@ -357,12 +374,12 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http, $lo
         var date = new Date(timestamp);
         return date.getShortMonthName() + " " + date.getDate() + ", " + date.getFullYear() + ", " + ("0" + date.getUTCHours()).slice(-2) + ":" + ("0" + date.getUTCMinutes()).slice(-2);
     };
-    $scope.remove_milestone = function() {
+    $scope.remove_milestone = function () {
         console.log("remove");
-        $http.post("/api/remove_milestone", {milestone_id: $scope.milestone_id}).success(function(data) {
+        $http.post("/api/remove_milestone", {milestone_id: $scope.milestone_id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
-                $location.path("/project/"+$scope.project_id+"/milestones");
+                $location.path("/project/" + $scope.project_id + "/milestones");
             } else {
                 alert("Error while removing!")
             }
@@ -370,9 +387,9 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http, $lo
     };
 });
 
-app.controller("LabelController", function($scope, $http, $mdMedia, $mdDialog) {
+app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) {
     console.log("labelcontroller");
-    $http.get("/api/get_labels").success(function(data) {
+    $http.get("/api/get_labels").success(function (data) {
         console.log(data);
         $scope.labels = data;
     });
@@ -394,13 +411,13 @@ app.controller("LabelController", function($scope, $http, $mdMedia, $mdDialog) {
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    $scope.remove_label = function(label_id) {
+    $scope.remove_label = function (label_id) {
         console.log(label_id);
-        $http.post("/api/remove_label", {label_id: label_id}).success(function(data) {
+        $http.post("/api/remove_label", {label_id: label_id}).success(function (data) {
             console.log(data);
-            if(data.status == "ok") {
-                $scope.labels.forEach(function(value, i) {
-                    if(value.id == label_id) {
+            if (data.status == "ok") {
+                $scope.labels.forEach(function (value, i) {
+                    if (value.id == label_id) {
                         $scope.labels.splice(i, 1);
                     }
                     console.log(i + " - " + value.id);
@@ -417,19 +434,19 @@ app.controller("LabelController", function($scope, $http, $mdMedia, $mdDialog) {
         $scope.cancel = function () {
             $mdDialog.hide()
         };
-        $scope.update_color = function(hexstring) {
-            if (/#\b[0-9A-F]{6}\b/gi.test(hexstring)) {
-                $scope.valid_color = hexstring;
-                console.log("valid color");
-            } else {
-                $scope.valid_color = "#000";
-                console.log("invalid color")
-            }
-        };
-        $scope.submit = function(name, color) {
-            $http.post("/api/add_label", {name: name, color: color}).success(function(data) {
+        // $scope.update_color = function(hexstring) {
+        //     if (/#\b[0-9A-F]{6}\b/gi.test(hexstring)) {
+        //         $scope.valid_color = hexstring;
+        //         console.log("valid color");
+        //     } else {
+        //         $scope.valid_color = "#000";
+        //         console.log("invalid color")
+        //     }
+        // };
+        $scope.submit = function (name, color) {
+            $http.post("/api/add_label", {name: name, color: color}).success(function (data) {
                 console.log(data);
-                if(data.status == "ok") {
+                if (data.status == "ok") {
                     $mdDialog.hide();
                     labels.push({id: data.id, name: name, color: color})
                 }
@@ -450,7 +467,7 @@ Date.prototype.getMonthName = function () {
 };
 Date.prototype.getShortMonthName = function () {
     var monthname = this.getMonthName();
-    if(monthname === undefined) {
+    if (monthname === undefined) {
         return "";
     }
     return monthname.substr(0, 3);
