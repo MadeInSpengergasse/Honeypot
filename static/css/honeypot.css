@@ -87,7 +87,7 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 	padding: 10px 70px 20px 70px;
 	text-align: justify;
 }
-.status {
+.status, .label {
     padding: 4px 8px;
     color: #fff;
     border-radius: 3px;
@@ -98,4 +98,8 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 }
 .status-open {
     background-color: #6bc543;
+}
+.label{
+	width: 10em;
+	text-align: center;
 }
