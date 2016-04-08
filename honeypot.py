@@ -23,15 +23,6 @@ def create_database():
     db = sqlite3.connect("honeypot.sqlite")
     db.executescript(open("create_database.sql", "r").read())
     db.commit()
-    #     print(db.execute("""
-    # SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status,
-    # (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_created) AS created,
-    # (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_created=ts.ts_id) AS createdby,
-    # (SELECT ts.ts_timestamp FROM timestamp ts WHERE ts.ts_id=t.t_ts_closed) AS closed,
-    # (SELECT u.u_name FROM users u WHERE u.u_id=ts.ts_u_id AND t.t_ts_closed=ts.ts_id) AS closedby,
-    # t.t_p_project
-    # FROM todo t, timestamp ts where t.t_id=?
-    #     """).fetchall()[0])
     db.close()
 
 
@@ -97,7 +88,7 @@ def main():
 
     @app.route('/api/get_user_info', methods=['GET'])
     @flask_login.login_required
-    def get_user_info():  # TODO: dont expose access_token (should it be private?)
+    def get_user_info():
         ret_obj = {"status": "ok", "user": flask_login.current_user.__dict__}
         return flask.Response(json.dumps(ret_obj), mimetype="application/json")
 
@@ -107,20 +98,24 @@ def main():
     @flask_login.login_required
     def add_todo():
         params = flask.request.json
-        # lastrow = get_db().execute("INSERT INTO timestamp (ts_u_id) VALUES (?)",
-        #                            (flask_login.current_user.id,)).lastrowid
-        id = get_db().execute(
+        if params.get("title") is None or params.get("project_id") is None:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Missing title or project_id.\"}",
+                                  mimetype="application/json")
+        todo_id = get_db().execute(
             "INSERT INTO todo (t_title, t_description, t_u_asignee, t_m_milestone, t_status, t_p_project) VALUES (?, ?, ?, ?, ?, ?)",
             (params.get("title"), params.get("description"), params.get("asignee"), params.get("milestone"), 0,
              params.get("project_id"))).lastrowid
         get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id) VALUES (?, ?, ?)",
-                         (0, flask_login.current_user.id, id))
+                         (0, flask_login.current_user.id, todo_id))
         get_db().commit()
-        return flask.Response("{\"status\": \"ok\", \"id\": \"" + str(id) + "\"}", mimetype="application/json")
+        return flask.Response("{\"status\": \"ok\", \"id\": \"" + str(todo_id) + "\"}", mimetype="application/json")
 
     @app.route('/api/add_label', methods=['POST'])
     @flask_login.login_required
     def add_label():
+        if flask.request.json.get("name") is None or flask.request.json.get("color") is None:
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"Missing name or color.\"}",
+                                  mimetype="application/json")
         color = flask.request.json.get("color")
         match = re.match("#[0-9A-F]{6}", color, re.IGNORECASE)
         if not match:

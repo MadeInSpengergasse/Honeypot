@@ -3,6 +3,7 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
+	<link rel="stylesheet" href="/bower_components/md-color-picker/dist/mdColorPicker.min.css" />
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
@@ -12,6 +13,9 @@
     <script src="/bower_components/angular-material/angular-material.min.js"></script>
     <script src="/bower_components/showdown/dist/showdown.min.js"></script>
     <script src="/bower_components/ng-showdown/dist/ng-showdown.min.js"></script>
+	<script src="/bower_components/tinycolor/dist/tinycolor-min.js"></script>
+	<script src="/bower_components/md-color-picker/dist/mdColorPicker.min.js"></script>
+    <script src="/bower_components/angular-crumble/crumble.js"></script>
 
     <script src="js/honeypot.js"></script>
     <link rel="stylesheet" href="/css/honeypot.css" type="text/css">
@@ -57,7 +61,7 @@
 		  <md-button hide-gt-md class="md-icon-button mdb-noeggfix" aria-label="Settings" ng-click="toggleLeft()">
 			<md-icon class="md-avatar-icon">menu</md-icon>
           </md-button>
-		  <span class="toolbar-title">Projects > Honeypot > Todo > Dynamische Titel hinzufügen!</span>
+		  <span class="toolbar-title"><md-button ng-repeat="bc in crumble.trail" ng-href="#{{bc.path}}">{{bc.label}}</md-button></span>
 		  <span flex></span><!-- fill up the space between left and right area -->
 		  <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
 		  <md-button ng-show="user != null" title="{{user.name}}" ng-click="href('/profile')" aria-label="Profile picture" class="md-icon-button launch mdb-noeggfix">
