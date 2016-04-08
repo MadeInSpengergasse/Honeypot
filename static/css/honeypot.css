@@ -1,74 +1,101 @@
-.status, .label {
+/* Unnecessary theme details & co. */
+/*---------------------------------*/
+a{text-decoration: none; font-weight: normal; outline: 0;}
+a.md-default-theme:not(.md-button), a:not(.md-button){color: #ff9800;}
+a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100;}
+*::selection {
+	background: #ffcc80; /* WebKit/Blink Browsers */
+}
+*::-moz-selection {
+	background: #ffcc80; /* Gecko Browsers */
+}
+.md-sidenav-left, md-toolbar, img{
+	-webkit-user-select: none; /* Chrome all / Safari all / Opera some */
+	-moz-user-select: none; /* Firefox all */
+	-ms-user-select: none; /* IE 10+ */
+	-o-user-select: none; /* Opera some */
+	user-select: none;
+}
+
+
+/* Left sidebar */
+/*--------------*/
+.md-sidenav-left {
+	background: #37474F;
+}
+.nav-header {
+	background: #263238;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.docs-logo {
+	text-align: center;
+	margin: 10px 0 20px 0;
+}
+.docs-logo img {
+	height: 200px;
+	width: auto;
+	display: block;
+}
+.docs-logotype {
+	color: white;
+	text-align: center;
+	font-size: 26px;
+}
+/* Enable this section to get a grey-themed navigation menu */
+/*
+.nav-menu{
+	background: #37474F;
+	color: white;
+}
+.md-avatar-icon { color: rgba(255, 255, 255, 1); }
+*/
+
+
+/* Toolbar */
+/*---------*/
+/* Ellipsis for the title */
+.toolbar-title{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+    -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
+    max-width: 42em;
+}
+/* Stops the buttons from turning into eggs in mobile view */
+.mdb-noeggfix{
+	min-width: 40px !important;
+}
+/* Resize the user avatar and center it in a smaller parent element */
+.user-avatar {
+	height: 40px;
+	width: 40px;
+	position: absolute;
+	left: 50%; top: 50%;
+	-webkit-transform: translateY(-50%) translateX(-50%);
+	-moz-transform: translateY(-50%) translateX(-50%);
+	-ms-transform: translateY(-50%) translateX(-50%);
+	-o-transform: translateY(-50%) translateX(-50%);
+	transform: translateY(-50%) translateX(-50%);
+}
+
+
+/* Content */
+/*---------*/
+.main-insert-view{
+	padding: 10px 70px 20px 70px;
+	text-align: justify;
+}
+.status {
     padding: 4px 8px;
     color: #fff;
     border-radius: 3px;
     margin-right: 8px;
 }
-
-.label {
-    width: 10em;
-    text-align: center;
-}
-
 .status-closed {
     background-color: #bc2b00;
 }
-
 .status-open {
     background-color: #6bc543;
-}
-
-.projects-button {
-    margin-left: 20px;
-}
-
-.profile-picture {
-    margin-top: 5px;
-    height: 45px;
-    width: 45px;
-    border-radius: 10%;
-}
-
-.add-project-dialog, .add-todo-dialog, .add-milestone-dialog, .add-label-dialog {
-    min-width: 500px;
-    margin: 10px;
-}
-
-.honeypot-logo {
-    height: 50px;
-    width: 50px;
-}
-
-.small-profile-picture {
-    height: 20px;
-    width: 20px;
-    border-radius: 10%;
-    vertical-align: middle;
-}
-
-.a-logo {
-     text-decoration: none; color: inherit;"
-}
-
-.honeypot-span {
-    line-height: 64px;
-}
-
-.main-insert-view {
-    margin: 30px;
-}
-
-.add-todo-dialog {
-    fill: #ff00ff;
-}
-
-.open-svg {
-    fill: #ff00ff;
-}
-
-.event-icons {
-    display: inline-flex;
-    vertical-align: middle;
-    margin-right: 5px;
-    -webkit-user-select: none;
 }

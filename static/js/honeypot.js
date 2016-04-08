@@ -1,6 +1,6 @@
 var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ng-showdown']);
 
-app.config(function ($routeProvider) {
+app.config(function ($routeProvider,$mdThemingProvider) {
     $routeProvider.when('/', {
         templateUrl: "/snippets/home.html"
     }).when('/project/:project_id', {
@@ -19,8 +19,71 @@ app.config(function ($routeProvider) {
         template: '<ng-include src="templatePath" />',
         controller: 'CatchAllCtrl'
     });
+	
+	$mdThemingProvider.theme('default').primaryPalette('blue-grey', {
+      'default': '800', // by default use shade 800 from the blue-grey palette for primary intentions
+      //'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
+      //'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
+      //'hue-3': '300' // use shade A100 for the <code>md-hue-3</code> class
+    }).accentPalette('orange', {
+      'default': '500' // use shade 500 for default, and keep all other shades the same
+    });
 });
 
+app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log){
+    $scope.toggleLeft = buildDelayedToggler('left');
+    /**
+     * Supplies a function that will continue to operate until the
+     * time is up.
+     */
+    function debounce(func, wait, context) {
+      var timer;
+      return function debounced() {
+        var context = $scope,
+            args = Array.prototype.slice.call(arguments);
+        $timeout.cancel(timer);
+        timer = $timeout(function() {
+          timer = undefined;
+          func.apply(context, args);
+        }, wait || 10);
+      };
+    }
+    /**
+     * Build handler to open/close a SideNav; when animation finishes
+     * report completion in console
+     */
+    function buildDelayedToggler(navID) {
+      return debounce(function() {
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            $log.debug("toggle " + navID + " is done");
+          });
+      }, 200);
+    }
+    function buildToggler(navID) {
+      return function() {
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            $log.debug("toggle " + navID + " is done");
+          });
+      }
+    }
+  });
+
+app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+    $scope.close = function () {
+      $mdSidenav('left').close()
+        .then(function () {
+          $log.debug("close LEFT is done");
+        });
+    };
+  });
+
+
+/* Luca's stuff */
+/*--------------*/
 app.controller("CatchAllCtrl", function ($scope, $routeParams) {
     $scope.templatePath = "snippets/" + $routeParams.templatePath + ".html";
 });
