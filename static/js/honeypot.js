@@ -50,24 +50,15 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log, crumble)
     var getParent = crumble.getParent;
     crumble.getParent = function (path) {
         var route = crumble.getRoute(path);
-        // console.log(route);
-        if(route != undefined && angular.isDefined(route.dynamic_parent) && angular.isDefined(route.regex_search) && angular.isDefined(route.parent_to_replace)) {
+        if (route != undefined && angular.isDefined(route.dynamic_parent) && angular.isDefined(route.regex_search) && angular.isDefined(route.parent_to_replace)) {
             console.log("DYNAMIC PARENT!!!");
-            // console.log(route.parent);
-            // console.log(path);
-            var searchregex_str = "\/"+route.regex_search+"\/(.*?)\/";
-            console.log(route.regex_search);
-            // for(var i=0; i<route.regex_search.length; ++i) { // uncomment when using array as route.regex_search
-            //     searchregex_str = searchregex_str.concat();
-            // }
+            var searchregex_str = "\/" + route.regex_search + "\/(.*?)\/";
             var searchregex = new RegExp(searchregex_str, "g");
-            console.log(searchregex);
             var id = searchregex.exec(path)[1];
-            if(id == -1) { // if not found
+            if (id == -1) { // if not found
                 console.log("search found nothing");
                 return "/"
             }
-            console.log(id);
             var realparent = route.parent_to_replace.replace("%id%", id);
             console.log(realparent);
             console.log("end dynamic parent");
@@ -119,11 +110,9 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log, crumble)
     }
 });
 
-app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav) {
     $scope.close = function () {
-        $mdSidenav('left').close().then(function () {
-            $log.debug("close LEFT is done");
-        });
+        $mdSidenav('left').close();
     };
 });
 
@@ -133,7 +122,7 @@ app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
 app.controller("CatchAllCtrl", function ($scope, $routeParams, crumble) {
     console.log("CatchAll");
     $scope.templatePath = "snippets/" + $routeParams.templatePath + ".html";
-    crumble.update({lowest_title: $routeParams.templatePath});
+    crumble.update({lowest_title: $routeParams.templatePath}); //TODO: Maybe use own method
 });
 
 app.controller("HeaderController", function ($rootScope, $scope, $http, $location, crumble) {
@@ -148,6 +137,10 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
         }
     });
     $http.get("/api/get_users").success(function (data) {
+        if (data.status == "error") {
+            console.log("not authorized");
+            return;
+        }
         var arr = [];
         data.forEach(function (value) {
             arr[value.id] = value;
@@ -166,8 +159,38 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
     $rootScope.goto = function (url) {
         window.location.href = url;
     };
-    $rootScope.test_a = function() {
+    $rootScope.test_a = function () {
         console.log(crumble.trail);
+        console.log($location.path());
+    };
+    $rootScope.handle_crumble = function(current_project_id, new_project_name, new_project_id) {
+        console.log("handle_crumble()");
+        if(new_project_name && new_project_id) {
+            console.log("already given project parameters");
+            $rootScope.project = {id: new_project_id, title: new_project_name};
+        } else if (current_project_id != $rootScope.project.id) {
+            update_project_name();
+        }
+        var lowest = /\/(.*)\//.exec($location.path())[1];
+        // console.log("lowest: ");
+        // console.log(lowest);
+        if (lowest == undefined) {
+            lowest = /\/(.*)/.exec($location.path())[1];
+        }
+        if (lowest == "project" || lowest == "projects") {
+            $rootScope.title_2 = "Projects";
+        }
+        else if (lowest == "labels" || lowest == "label") {
+            $rootScope.title_2 = "Labels"
+        }
+        console.log($rootScope.project.title);
+        console.log($rootScope.title_2);
+        crumble.update({project_title: $rootScope.project.title, lowest_title: $rootScope.title_2});
+    };
+    $rootScope.update_project_name = function(project_id) {
+        $http.get("/api/get_project", {params: {project_id: project_id}}).success(function (data) {
+            $rootScope.project = {id: project_id, title: data.title};
+        });
     }
 });
 
@@ -179,19 +202,14 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
     $scope.add_project = function (ev) {
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
-                controller: AddProjectController,
-                templateUrl: 'snippets/add_project.html',
-                parent: angular.element(document.body),
-                targetEvent: ev,
-                clickOutsideToClose: true,
-                fullscreen: useFullScreen,
-                locals: {projects: $scope.projects}
-            })
-            .then(function (answer) {
-                $scope.status = 'You said the information was "' + answer + '".';
-            }, function () {
-                $scope.status = 'You cancelled the dialog.';
-            });
+            controller: AddProjectController,
+            templateUrl: 'snippets/add_project.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: useFullScreen,
+            locals: {projects: $scope.projects}
+        });
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
         }, function (wantsFullScreen) {
@@ -217,10 +235,10 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
     }
 });
 
-app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location, crumble) {
+app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location, $rootScope) {
     $scope.id = $routeParams.project_id;
     $http.get("/api/get_project", {params: {project_id: $routeParams.project_id}}).success(function (data) {
-        crumble.update({project_title: data.title});
+        $rootScope.handle_crumble($scope.id, data.title, $scope.id);
         $scope.project = data;
     });
     $http.get("/api/get_todos", {params: {project_id: $routeParams.project_id}}).success(function (data) {
@@ -308,7 +326,7 @@ app.controller("TodoController", function ($scope, $routeParams, $http, crumble)
     $scope.project_id = $routeParams.project_id;
     $scope.update_status_texts = ["Close todo", "Re-open todo"];
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function (data) {
-        crumble.update({todo_title: data.title});
+        crumble.update({todo_title: data.title}); //TODO: use own method
         console.log(data);
         $scope.todo = data;
     });
@@ -342,15 +360,14 @@ app.controller("TodoController", function ($scope, $routeParams, $http, crumble)
         $http.post("/api/add_comment", {content: comment, todo_id: $scope.id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
-                comment = "";
                 $scope.events.push(data.new_comment);
             }
         });
     }
 });
 
-app.controller("MilestonesController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, crumble) {
-    crumble.update();
+app.controller("MilestonesController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $rootScope) {
+    $rootScope.handle_crumble();
     console.log("MilestonesController");
     $scope.project_id = $routeParams.project_id;
     $http.get("/api/get_milestones", {params: {project_id: $scope.project_id}}).success(function (data) {
@@ -405,7 +422,7 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http, $lo
     $scope.project_id = $routeParams.project_id;
     $scope.milestone_id = $routeParams.milestone_id;
     $http.get("/api/get_milestone", {params: {milestone_id: $scope.milestone_id}}).success(function (data) {
-        crumble.update({milestone_title: data.title});
+        crumble.update({milestone_title: data.title}); //TODO: Use own method
         console.log(data);
         $scope.milestone = data;
     });

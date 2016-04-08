@@ -40,6 +40,6 @@
             <p ng-show="comment == null">Nothing to preview.</p>
         </md-tab>
     </md-tabs>
-    <md-button ng-click="submit_comment(comment)" class="md-raised md-primary">Submit Comment</md-button>
+    <md-button ng-click="submit_comment(comment); comment = '';" class="md-raised md-primary">Submit Comment</md-button>
     <md-button ng-click="update_status()" class="md-raised">{{update_status_texts[todo.status]}}</md-button>
 </div>
