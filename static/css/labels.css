@@ -1,0 +1,15 @@
+#label-list{
+	margin-top: 10px;
+	padding: 0px !important;
+}
+.subheader{
+	background-color: rgb(245,245,245);
+}
+.subheader-button{
+	position: absolute;
+	top: 50%;
+	right: 16px;
+	margin: 0 0 0 16px;
+	-webkit-transform: translate3d(0,-50%,0);
+	transform: translate3d(0,-50%,0);
+}

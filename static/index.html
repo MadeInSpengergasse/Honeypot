@@ -28,11 +28,10 @@
     <link rel="stylesheet" href="/css/honeypot.css" type="text/css">
 </head>
 <body>
-<div id="wrapper" ng-controller="AppCtrl" layout="column" ng-cloak>
-  <section layout="row" flex>
+<div layout="row" id="wrapper" ng-controller="AppCtrl" layout="column" ng-cloak>
     <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop md-whiteframe="4">
 	  <header class="nav-header">
-        <a ng-href="/#/" class="docs-logo">
+        <a ng-href="/#/home" class="docs-logo">
           <img src="images/logo.svg" alt="" />
           <span class="docs-logotype">Honeypot</span>
         </a>
@@ -43,15 +42,15 @@
 			<md-list-item ng-show="user == null">
 			  <p>Please login first.</p>
 			</md-list-item>
-			<md-list-item ng-show="user != null" ng-click="href('/projects')">
+			<md-list-item ng-show="user != null" ng-click="href('/projects'); toggleLeft()">
 			  <md-icon class="md-avatar-icon">folder_shared</md-icon>
 			  <p>Projects</p>
 			</md-list-item>
-			<md-list-item ng-show="user != null" ng-click="test_a();"><!-- ng-click="href('/teammembers')" -->
+			<md-list-item ng-show="user != null" ng-click="href('/teammembers'); toggleLeft()">
 			  <md-icon class="md-avatar-icon">people</md-icon>
 			  <p>Teammembers</p>
 			</md-list-item>
-			<md-list-item ng-show="user != null" ng-click="href('/labels')">
+			<md-list-item ng-show="user != null" ng-click="href('/labels'); toggleLeft()">
 			  <md-icon class="md-avatar-icon">label</md-icon>
 			  <p>Labels</p>
 			</md-list-item>
@@ -59,13 +58,14 @@
 		</div>
       </md-content>
     </md-sidenav>
-    <div layout="column" layout-fill>
+	
+    <div layout="column" flex>
 	  <md-toolbar ng-controller="HeaderController">
 		<div class="md-toolbar-tools">
 		  <md-button hide-gt-md class="md-icon-button mdb-noeggfix" aria-label="Settings" ng-click="toggleLeft()">
 			<md-icon class="md-avatar-icon">menu</md-icon>
           </md-button>
-		  <span class="toolbar-title"><md-button ng-repeat="bc in crumble.trail" ng-href="#{{bc.path}}">{{bc.label}}</md-button></span>
+		  <span class="toolbar-title"><span class="breadcrumb-wrapper" ng-repeat="bc in crumble.trail"><md-button ng-click="href(bc.path)">{{bc.label}}</md-button></span></span>
 		  <span flex></span><!-- fill up the space between left and right area -->
 		  <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
 		  <md-button ng-show="user != null" title="{{user.name}}" ng-click="href('/profile')" aria-label="Profile picture" class="md-icon-button launch mdb-noeggfix">
@@ -74,11 +74,10 @@
 		  <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
 		</div>
 	  </md-toolbar>
-	  <md-content>
-		<div ng-view class="main-insert-view"></div>
-	  </md-content>
+	  
+	  <md-content class="main-insert-view" ng-view>
+	  </div>
 	</div>
-  </section>
 </div>
 <noscript>
   <div id="noscript-warning">
