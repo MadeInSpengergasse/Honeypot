@@ -55,6 +55,10 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 
 /* Toolbar */
 /*---------*/
+/* Stops the buttons from turning into eggs in mobile view */
+.mdb-noeggfix{
+	min-width: 40px !important;
+}
 /* Ellipsis for the title */
 .toolbar-title{
     white-space: nowrap;
@@ -63,9 +67,10 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
     -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
     max-width: 42em;
 }
-/* Stops the buttons from turning into eggs in mobile view */
-.mdb-noeggfix{
-	min-width: 40px !important;
+/* Add bigger-than symbols between the elements of the breadcrumb trail navigation */
+.toolbar-title .breadcrumb-wrapper:not(:last-child)::after{
+	/* This unicode code point knows it */
+    content: '\3E'
 }
 /* Resize the user avatar and center it in a smaller parent element */
 .user-avatar {
@@ -83,11 +88,15 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 
 /* Content */
 /*---------*/
+h2{
+	font-weight: normal;
+	font-style: light;
+}
 #wrapper{
 	height: 100%;
 }
 .main-insert-view{
-	padding: 10px 70px 20px 70px;
+	padding: 1% 6% 4% 6%;
 	text-align: justify;
 }
 .status, .label {
