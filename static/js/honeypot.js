@@ -16,14 +16,14 @@ app.config(function ($routeProvider, $mdThemingProvider) {
     }).when('/project/:project_id/milestone/:milestone_id', {
         template: '<ng-include src="\'snippets/milestone.html\'">',
         controller: 'MilestoneController',
-        label: '{{milestone_title}}', // title of the milestone
+        label: '{{third_level}}', // title of the milestone
         parent_to_replace: '/project/%id%/milestones',
         regex_search: 'project',
         dynamic_parent: true
     }).when('/project/:project_id/todo/:todo_id', {
         template: '<ng-include src="\'snippets/todo.html\'">',
         controller: 'TodoController',
-        label: '{{todo_title}}', // title of the todo
+        label: '{{third_level}}', // title of the todo
         parent_to_replace: '/project/%id%',
         regex_search: 'project',
         dynamic_parent: true
@@ -163,17 +163,21 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
         console.log(crumble.trail);
         console.log($location.path());
     };
-    $rootScope.handle_crumble = function(current_project_id, new_project_name, new_project_id) {
+    $rootScope.handle_crumble = function(current_project_id, third_level, new_project_name, new_project_id) {
         console.log("handle_crumble()");
-        if(new_project_name && new_project_id) {
+        $rootScope.third_level = third_level;
+        if(new_project_name && new_project_id) { // handle project name & id
             console.log("already given project parameters");
             $rootScope.project = {id: new_project_id, title: new_project_name};
-        } else if (current_project_id != $rootScope.project.id) {
-            update_project_name();
+        } else if ($rootScope.project == undefined || current_project_id != $rootScope.project.id) {
+            $rootScope.update_project_name(current_project_id, true);
+            return;
         }
-        var lowest = /\/(.*)\//.exec($location.path())[1];
-        // console.log("lowest: ");
-        // console.log(lowest);
+        handle_crumble_continue();
+    };
+    var handle_crumble_continue = function() {
+        // handle lowest label
+        var lowest = /\/(.*?)\//.exec($location.path())[1];
         if (lowest == undefined) {
             lowest = /\/(.*)/.exec($location.path())[1];
         }
@@ -185,11 +189,15 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
         }
         console.log($rootScope.project.title);
         console.log($rootScope.title_2);
-        crumble.update({project_title: $rootScope.project.title, lowest_title: $rootScope.title_2});
+        crumble.update({project_title: $rootScope.project.title, lowest_title: $rootScope.title_2, third_level: $rootScope.third_level});
     };
-    $rootScope.update_project_name = function(project_id) {
+    $rootScope.update_project_name = function(project_id, continueafterwards) {
         $http.get("/api/get_project", {params: {project_id: project_id}}).success(function (data) {
+            console.log("updated project name");
             $rootScope.project = {id: project_id, title: data.title};
+            if(continueafterwards) {
+                handle_crumble_continue();
+            }
         });
     }
 });
@@ -238,7 +246,7 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
 app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location, $rootScope) {
     $scope.id = $routeParams.project_id;
     $http.get("/api/get_project", {params: {project_id: $routeParams.project_id}}).success(function (data) {
-        $rootScope.handle_crumble($scope.id, data.title, $scope.id);
+        $rootScope.handle_crumble($scope.id, undefined, data.title, $scope.id);
         $scope.project = data;
     });
     $http.get("/api/get_todos", {params: {project_id: $routeParams.project_id}}).success(function (data) {
@@ -321,12 +329,13 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
     }
 });
 
-app.controller("TodoController", function ($scope, $routeParams, $http, crumble) {
+app.controller("TodoController", function ($scope, $rootScope, $routeParams, $http, crumble) {
     $scope.id = $routeParams.todo_id;
     $scope.project_id = $routeParams.project_id;
     $scope.update_status_texts = ["Close todo", "Re-open todo"];
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function (data) {
-        crumble.update({todo_title: data.title}); //TODO: use own method
+        $rootScope.handle_crumble($scope.project_id, data.title);
+        //crumble.update({todo_title: data.title}); //TODO: use own method
         console.log(data);
         $scope.todo = data;
     });
@@ -367,9 +376,9 @@ app.controller("TodoController", function ($scope, $routeParams, $http, crumble)
 });
 
 app.controller("MilestonesController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $rootScope) {
-    $rootScope.handle_crumble();
     console.log("MilestonesController");
     $scope.project_id = $routeParams.project_id;
+    $rootScope.handle_crumble($scope.project_id);
     $http.get("/api/get_milestones", {params: {project_id: $scope.project_id}}).success(function (data) {
         console.log(data);
         $scope.milestones = data;
@@ -418,11 +427,12 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
     }
 });
 
-app.controller("MilestoneController", function ($scope, $routeParams, $http, $location, crumble) {
+app.controller("MilestoneController", function ($scope, $routeParams, $http, $location, $rootScope) {
     $scope.project_id = $routeParams.project_id;
     $scope.milestone_id = $routeParams.milestone_id;
     $http.get("/api/get_milestone", {params: {milestone_id: $scope.milestone_id}}).success(function (data) {
-        crumble.update({milestone_title: data.title}); //TODO: Use own method
+        $rootScope.handle_crumble($scope.project_id, data.title);
+        //crumble.update({milestone_title: data.title}); //TODO: Use own method
         console.log(data);
         $scope.milestone = data;
     });
