@@ -2,12 +2,12 @@
 <div ng-controller="LabelController">
   <h2>Labels</h2>
   <md-button ng-click="add_label()" class="md-raised md-primary">Add Label</md-button>
-  <md-button ng-click="add_category()" class="md-raised md-primary">Add Category</md-button>
+  <md-button ng-click="add_category()" class="md-raised md-primary" ng-disabled="true">Add Category</md-button>
   <md-list id="label-list" ng-cloak>
 	<md-divider id="divider"></md-divider>
 	<md-subheader class="subheader md-no-sticky">
 	  General
-	  <md-button class="subheader-button" ng-click="remove_category(category.id)">Remove</md-button>
+	  <md-button class="subheader-button" ng-click="remove_category(category.id)" ng-disabled="true">Remove</md-button>
 	</md-subheader>
 	<md-list-item class="secondary-button-padding" ng-repeat="label in labels">
 	  <md-icon aria-hidden="true" md-svg-src="images/color.svg" ng-style=" {'fill': label.color}"></md-icon>
