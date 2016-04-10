@@ -3,6 +3,7 @@ var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', '
 app.config(function ($routeProvider, $mdThemingProvider) {
     $routeProvider.when('/', {
         templateUrl: "/snippets/home.html",
+        controller: 'HomeController',
         label: "Home"
     }).when('/project/:project_id', {
         template: '<ng-include src="\'snippets/project.html\'">',
@@ -42,6 +43,10 @@ app.config(function ($routeProvider, $mdThemingProvider) {
     }).accentPalette('orange', {
         'default': '500' // use shade 500 for default, and keep all other shades the same
     });
+});
+
+app.controller("HomeController", function(crumble) {
+    crumble.update();
 });
 
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log, crumble) {
