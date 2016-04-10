@@ -8,8 +8,8 @@
         <md-divider></md-divider>
         <md-list ng-repeat="todo in todos">
             <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}">
-                <div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">{{
-                    status_strings[todo.status] }}
+                <div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">
+                    {{ status_strings[todo.status] }}
                 </div>
                 <p>{{ todo.title }}</p>
                 <p class="md-secondary">#{{ todo.id }}</p>

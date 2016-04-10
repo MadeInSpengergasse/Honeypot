@@ -45,7 +45,7 @@ app.config(function ($routeProvider, $mdThemingProvider) {
     });
 });
 
-app.controller("HomeController", function(crumble) {
+app.controller("HomeController", function (crumble) {
     crumble.update();
 });
 
@@ -127,7 +127,7 @@ app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav) {
 app.controller("CatchAllCtrl", function ($scope, $routeParams, crumble) {
     console.log("CatchAll");
     $scope.templatePath = "snippets/" + $routeParams.templatePath + ".html";
-    crumble.update({lowest_title: $routeParams.templatePath}); //TODO: Maybe use own method
+    crumble.update({lowest_title: $routeParams.templatePath});
 });
 
 app.controller("HeaderController", function ($rootScope, $scope, $http, $location, crumble) {
@@ -168,10 +168,10 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
         console.log(crumble.trail);
         console.log($location.path());
     };
-    $rootScope.handle_crumble = function(current_project_id, third_level, new_project_name, new_project_id) {
+    $rootScope.handle_crumble = function (current_project_id, third_level, new_project_name, new_project_id) {
         console.log("handle_crumble()");
         $rootScope.third_level = third_level;
-        if(new_project_name && new_project_id) { // handle project name & id
+        if (new_project_name && new_project_id) { // handle project name & id
             console.log("already given project parameters");
             $rootScope.project = {id: new_project_id, title: new_project_name};
         } else if ($rootScope.project == undefined || current_project_id != $rootScope.project.id) {
@@ -180,7 +180,7 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
         }
         handle_crumble_continue();
     };
-    var handle_crumble_continue = function() {
+    var handle_crumble_continue = function () {
         // handle lowest label
         var lowest = /\/(.*?)\//.exec($location.path())[1];
         if (lowest == undefined) {
@@ -194,13 +194,17 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
         }
         console.log($rootScope.project.title);
         console.log($rootScope.title_2);
-        crumble.update({project_title: $rootScope.project.title, lowest_title: $rootScope.title_2, third_level: $rootScope.third_level});
+        crumble.update({
+            project_title: $rootScope.project.title,
+            lowest_title: $rootScope.title_2,
+            third_level: $rootScope.third_level
+        });
     };
-    $rootScope.update_project_name = function(project_id, continueafterwards) {
+    $rootScope.update_project_name = function (project_id, continueafterwards) {
         $http.get("/api/get_project", {params: {project_id: project_id}}).success(function (data) {
             console.log("updated project name");
             $rootScope.project = {id: project_id, title: data.title};
-            if(continueafterwards) {
+            if (continueafterwards) {
                 handle_crumble_continue();
             }
         });
@@ -213,6 +217,8 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
         $scope.projects = data;
     });
     $scope.add_project = function (ev) {
+        // Modal add dialog
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
             controller: AddProjectController,
@@ -226,6 +232,8 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
         }, function (wantsFullScreen) {
+            console.log("wantsFullScreen:");
+            console.log(wantsFullScreen);
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
@@ -235,6 +243,9 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
             $mdDialog.hide()
         };
         $scope.submit = function (title, description) {
+            if (description == undefined) {
+                description = "";
+            }
             $http.post("/api/add_project", {"title": title, "description": description}).success(function (data) {
                 console.log(data);
                 if (data.status == "ok") {
@@ -253,12 +264,15 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
     $http.get("/api/get_project", {params: {project_id: $routeParams.project_id}}).success(function (data) {
         $rootScope.handle_crumble($scope.id, undefined, data.title, $scope.id);
         $scope.project = data;
+        console.log(data);
     });
     $http.get("/api/get_todos", {params: {project_id: $routeParams.project_id}}).success(function (data) {
         console.log(data);
         $scope.todos = data;
     });
     $scope.add_todo = function (ev) {
+        // Modal add dialog
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
             controller: AddTodoController,
@@ -340,7 +354,6 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
     $scope.update_status_texts = ["Close todo", "Re-open todo"];
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function (data) {
         $rootScope.handle_crumble($scope.project_id, data.title);
-        //crumble.update({todo_title: data.title}); //TODO: use own method
         console.log(data);
         $scope.todo = data;
     });
@@ -389,7 +402,8 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
         $scope.milestones = data;
     });
     $scope.add_milestone = function (ev) {
-        console.log("addmilestone");
+        // Modal add dialog
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
             controller: AddMilestoneController,
@@ -437,7 +451,6 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http, $lo
     $scope.milestone_id = $routeParams.milestone_id;
     $http.get("/api/get_milestone", {params: {milestone_id: $scope.milestone_id}}).success(function (data) {
         $rootScope.handle_crumble($scope.project_id, data.title);
-        //crumble.update({milestone_title: data.title}); //TODO: Use own method
         console.log(data);
         $scope.milestone = data;
     });
@@ -469,7 +482,8 @@ app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) 
         $scope.labels = data;
     });
     $scope.add_label = function (ev) {
-        console.log("addmilestone");
+        // Modal add dialog
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
         var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
         $mdDialog.show({
             controller: AddLabelController,

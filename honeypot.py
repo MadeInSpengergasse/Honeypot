@@ -121,9 +121,10 @@ def main():
         if not match:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Invalid color.\"}",
                                   mimetype="application/json")
-        id = get_db().execute("INSERT INTO label (l_name, l_color) VALUES (?, ?)", (flask.request.json.get("name"), flask.request.json.get("color"))).lastrowid
+        id = get_db().execute("INSERT INTO label (l_name, l_color) VALUES (?, ?)",
+                              (flask.request.json.get("name"), flask.request.json.get("color"))).lastrowid
         get_db().commit()
-        return flask.Response("{\"status\": \"ok\", \"id\": "+str(id)+"}", mimetype="application/json")
+        return flask.Response("{\"status\": \"ok\", \"id\": " + str(id) + "}", mimetype="application/json")
 
     @app.route('/api/add_milestone', methods=['POST'])
     @flask_login.login_required
@@ -150,10 +151,15 @@ def main():
     @app.route('/api/add_comment', methods=['POST'])
     @flask_login.login_required
     def add_comment():
-        last = get_db().execute("INSERT INTO event (e_type, e_content, e_t_id, e_u_id) VALUES (?, ?, ?, ?)", (2, flask.request.json.get("content"), flask.request.json.get("todo_id"), flask_login.current_user.id)).lastrowid
+        last = get_db().execute("INSERT INTO event (e_type, e_content, e_t_id, e_u_id) VALUES (?, ?, ?, ?)", (
+            2, flask.request.json.get("content"), flask.request.json.get("todo_id"),
+            flask_login.current_user.id)).lastrowid
         get_db().commit()
-        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?", (last,)).fetchone()
-        return flask.Response("{\"status\": \"ok\", \"new_comment\": "+json.dumps({"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]})+"}", mimetype="application/json")
+        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?",
+                               (last,)).fetchone()
+        return flask.Response("{\"status\": \"ok\", \"new_comment\": " + json.dumps(
+            {"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]}) + "}",
+                              mimetype="application/json")
 
     @app.route('/api/add_label_to_todo', methods=['POST'])
     @flask_login.login_required
@@ -172,7 +178,7 @@ def main():
         if params.get("status") == 1:  # close todo
             get_db().execute("INSERT INTO event (e_t_id, e_u_id, e_type) VALUES (?, ?, ?)",
                              (params.get("id"), flask_login.current_user.id, 1))
-        else:
+        elif params.get("status") != 0:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Invalid status.\"}",
                                   mimetype="application/json")
         get_db().execute(
@@ -197,10 +203,14 @@ def main():
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Already same status.\"}",
                                   mimetype="application/json")
         get_db().execute("UPDATE todo SET t_status=? WHERE t_id=?", (new_status, todo_id))
-        id = get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id) VALUES (?, ?, ?)", (new_status, flask_login.current_user.id, todo_id)).lastrowid
+        id = get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id) VALUES (?, ?, ?)",
+                              (new_status, flask_login.current_user.id, todo_id)).lastrowid
         get_db().commit()
-        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?", (id,)).fetchone()
-        return flask.Response("{\"status\": \"ok\", \"new_event\": "+json.dumps({"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]})+"}", mimetype="application/json")
+        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?",
+                               (id,)).fetchone()
+        return flask.Response("{\"status\": \"ok\", \"new_event\": " + json.dumps(
+            {"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]}) + "}",
+                              mimetype="application/json")
         # TODO: Test
 
     @app.route('/api/update_label', methods=['POST'])
@@ -254,7 +264,8 @@ def main():
     @flask_login.login_required
     def remove_milestone():
         get_db().execute("DELETE FROM milestone WHERE m_id=?", (flask.request.json.get("milestone_id"),))
-        get_db().execute("UPDATE todo SET t_m_milestone=? WHERE t_m_milestone=?", (None, flask.request.json.get("milestone_id")))
+        get_db().execute("UPDATE todo SET t_m_milestone=? WHERE t_m_milestone=?",
+                         (None, flask.request.json.get("milestone_id")))
         get_db().commit()
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
         # TODO: Test
@@ -264,12 +275,17 @@ def main():
     def remove_project():
         project_id = flask.request.json.get("project_id")
         get_db().execute("DELETE FROM project WHERE p_id=?", (project_id,))
+        todostoremove = get_db().execute("SELECT t_id FROM todo WHERE t_p_project=?", (project_id,)).fetchall()
+        remove = ()  # build a clean tuple list
+        for a in todostoremove:
+            remove += (a[0],)
         get_db().execute("DELETE FROM todo WHERE t_p_project=?", (project_id,))
-        # get_db().execute("DELETE FROM todo_and_label WHERE tl_t_todo=?")  # TODO: DO SOMETHING WITH IT!
+        get_db().execute('DELETE FROM todo_and_label WHERE tl_t_todo IN (%s)' %
+                         ','.join('?' * len(remove)), remove)  # see http://stackoverflow.com/a/1310001/3527128
         get_db().execute("DELETE FROM milestone WHERE m_p_project=?", (project_id,))
         get_db().commit()
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
-        # TODO: Test and complete
+        # TODO: Test
 
     # -------------------------- GET --------------------------
 
@@ -326,8 +342,9 @@ def main():
             search = "%"
         else:
             search = "%" + flask.request.args.get("name") + "%"
-        result = get_db().execute("SELECT m_id, m_title, m_status FROM milestone WHERE m_p_project=? AND m_title LIKE ? COLLATE nocase",
-                                  (flask.request.args.get("project_id"), search)).fetchall()
+        result = get_db().execute(
+            "SELECT m_id, m_title, m_status FROM milestone WHERE m_p_project=? AND m_title LIKE ? COLLATE nocase",
+            (flask.request.args.get("project_id"), search)).fetchall()
         print(result)
         ret = []
         for a in result:
@@ -384,7 +401,9 @@ def main():
     @app.route('/api/get_events', methods=['GET'])
     @flask_login.login_required
     def get_events():
-        results = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_t_id=? ORDER BY e_timestamp", (flask.request.args.get("id"),)).fetchall()
+        results = get_db().execute(
+            "SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_t_id=? ORDER BY e_timestamp",
+            (flask.request.args.get("id"),)).fetchall()
         if results is None:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                                   mimetype="application/json")
@@ -409,7 +428,8 @@ def main():
     @app.route('/api/get_assigned_labels', methods=['GET'])
     @flask_login.login_required
     def get_assigned_labels():
-        result = get_db().execute("SELECT tl_l_label FROM todo_and_label WHERE tl_t_todo=?", flask.request.args.get("id")).fetchall()
+        result = get_db().execute("SELECT tl_l_label FROM todo_and_label WHERE tl_t_todo=?",
+                                  flask.request.args.get("id")).fetchall()
         ret = []
         for a in result:
             ret.append(a[0])
