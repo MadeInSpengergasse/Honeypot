@@ -25,6 +25,7 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 }
 .nav-header {
 	background: #263238;
+	cursor: pointer;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -96,7 +97,7 @@ h2{
 	height: 100%;
 }
 .main-insert-view{
-	padding: 1% 6% 4% 6%;
+	padding: 0% 6% 4% 6%;
 	text-align: justify;
 }
 .status, .label {
