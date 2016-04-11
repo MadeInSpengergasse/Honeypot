@@ -30,12 +30,14 @@
 <body>
 <div layout="row" id="wrapper" ng-controller="AppCtrl" layout="column" ng-cloak>
     <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop md-whiteframe="4">
-	  <header class="nav-header">
-        <a ng-href="/#/" class="docs-logo">
-          <img src="images/logo.svg" alt="" />
-          <span class="docs-logotype">Honeypot</span>
-        </a>
-	  </header>
+	  <a ng-click="href('/'); toggleLeft()">
+		<header class="nav-header">
+		  <span class="docs-logo">
+			<img src="images/logo.svg" alt="" />
+			<span class="docs-logotype">Honeypot</span>
+		  </span>
+	    </header>
+	  </a>
       <md-content>
 		<div class="nav-menu">
 		  <md-list>
@@ -76,7 +78,6 @@
 	  </md-toolbar>
 	  
 	  <md-content class="main-insert-view" ng-view>
-	  </div>
 	</div>
 </div>
 <noscript>
