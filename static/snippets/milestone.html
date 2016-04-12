@@ -4,5 +4,5 @@
     <br>
     <time datetime="{{milestone.endtime}}">{{timestamp_to_date(milestone.endtime)}}</time>
     <br><br>
-    <md-button class="md-raised" ng-click="remove_milestone()">Remove</md-button>
+    <md-button class="md-raised" ng-click='showConfirm("Remove milestone", "Do you really want to remove this milestone?", remove_milestone, $event);'>Remove</md-button>
 </div>

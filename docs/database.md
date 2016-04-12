@@ -3,6 +3,7 @@
 u_name (name for user, just for display)
 u_id (github unique id for user)
 u_access_token (github user access token)
+u_access_level (0=admin, 1=guest)
 
 ###Labels
 l_id (unique id)
@@ -42,7 +43,7 @@ ts_u_id (user who did that)
 ts_timestamp (when it happened)
 
 ### Event
-e_id
+e_id (unique id)
 e_type INTEGER (0=opened, 1=closed, 2=comment)
 e_content TEXT (comment content)
 e_ts_timestamp INTEGER

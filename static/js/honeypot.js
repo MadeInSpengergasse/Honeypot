@@ -130,7 +130,7 @@ app.controller("CatchAllCtrl", function ($scope, $routeParams, crumble) {
     crumble.update({lowest_title: $routeParams.templatePath});
 });
 
-app.controller("HeaderController", function ($rootScope, $scope, $http, $location, crumble) {
+app.controller("HeaderController", function ($rootScope, $scope, $http, $location, $mdDialog, crumble) {
     $rootScope.status_strings = ["Open", "Closed"];
     $http.get("/api/get_client_id").success(function (data) {
         $scope.client_id = data;
@@ -208,7 +208,23 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
                 handle_crumble_continue();
             }
         });
-    }
+    };
+    $rootScope.showConfirm = function (title, content, callback, ev) {
+        console.log("arguments[4]");
+        console.log(arguments[4]);
+        var extra_param = arguments[4];
+        var confirm = $mdDialog.confirm()
+            .title(title)
+            .textContent(content)
+            .targetEvent(ev)
+            .ok('Confirm')
+            .cancel('Cancel');
+        $mdDialog.show(confirm).then(function () {
+            callback(true, extra_param);
+        }, function () {
+            callback(false);
+        });
+    };
 });
 
 app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedia) {
@@ -289,7 +305,9 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    $scope.remove_project = function () {
+    $scope.remove_project = function (confirm) {
+        console.log("REMOVE PROJECT: " + confirm);
+        if(confirm === false) return;
         $http.post("/api/remove_project", {project_id: $scope.id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
@@ -500,8 +518,10 @@ app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) 
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    $scope.remove_label = function (label_id) {
-        console.log(label_id);
+    $scope.remove_label = function (confirm, label_id) {
+        console.log("label_id: " + label_id);
+        console.log(confirm);
+        if(confirm === false) return;
         $http.post("/api/remove_label", {label_id: label_id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {

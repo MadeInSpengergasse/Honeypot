@@ -7,12 +7,12 @@
 	<md-divider id="divider"></md-divider>
 	<md-subheader class="subheader md-no-sticky">
 	  General
-	  <md-button class="subheader-button" ng-click="remove_category(category.id)" ng-disabled="true">Remove</md-button>
+	  <md-button class="subheader-button" ng-click='showConfirm("Remove category", "Do you really want to remove this category? All associated labels will be removed too!", remove_category, $event, category.id);' ng-disabled="true">Remove</md-button>
 	</md-subheader>
 	<md-list-item class="secondary-button-padding" ng-repeat="label in labels">
 	  <md-icon aria-hidden="true" md-svg-src="images/color.svg" ng-style=" {'fill': label.color}"></md-icon>
       <p>{{label.name}}</p>
-      <md-button class="md-secondary" ng-click="remove_label(label.id)">Remove</md-button>
+      <md-button class="md-secondary" ng-click='showConfirm("Remove label", "Do you really want to remove this label?", remove_label, $event, label.id);'>Remove</md-button>
 	</md-list-item>
   </md-list>
 </div>
