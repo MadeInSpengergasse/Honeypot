@@ -14,5 +14,6 @@
       <p>{{label.name}}</p>
       <md-button class="md-secondary" ng-click='showConfirm("Remove label", "Do you really want to remove this label?", remove_label, $event, label.id);'>Remove</md-button>
 	</md-list-item>
+      <span ng-hide="labels.length > 0" class="list-empty-notice">No item in list.</span>
   </md-list>
 </div>

@@ -456,8 +456,11 @@ def main():
     @flask_login.login_required
     def get_assigned_labels():
         # TODO: Validation
+        if not flask.request.args.get("id"):
+            return flask.Response("{\"status\": \"error\", \"error_message\": \"No id given.\"}",
+                                  mimetype="application/json")
         result = get_db().execute("SELECT tl_l_label FROM todo_and_label WHERE tl_t_todo=?",
-                                  flask.request.args.get("id")).fetchall()
+                                  (flask.request.args.get("id"),)).fetchall()
         ret = []
         for a in result:
             ret.append(a[0])

@@ -6,14 +6,15 @@
         <md-button ng-click='href("/project/"+id+"/milestones")' class="md-raised">Milestones</md-button>
         <md-button ng-click='showConfirm("Remove project", "Do you really want to remove this project? All associated todos and milestones will be removed!", remove_project, $event)' class="md-raised md-warn">Remove</md-button>
         <md-divider></md-divider>
-        <md-list ng-repeat="todo in todos">
-            <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}">
+        <md-list>
+            <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}" ng-repeat="todo in todos">
                 <div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">
                     {{ status_strings[todo.status] }}
                 </div>
                 <p>{{ todo.title }}</p>
                 <p class="md-secondary">#{{ todo.id }}</p>
             </md-list-item>
+            <span ng-hide="todos.length > 0" class="list-empty-notice">No item in list.</span>
         </md-list>
     </md-content>
 </div>
