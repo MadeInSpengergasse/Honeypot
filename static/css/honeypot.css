@@ -69,7 +69,7 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
     max-width: 42em;
 }
 /* Add bigger-than symbols between the elements of the breadcrumb trail navigation */
-.toolbar-title .breadcrumb-wrapper:not(:last-child)::after{
+.breadcrumb-wrapper:not(:last-child)::after{
 	/* This unicode code point knows it */
     content: '\3E'
 }
@@ -91,13 +91,12 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 /*---------*/
 h2{
 	font-weight: normal;
-	font-style: light;
 }
 #wrapper{
 	height: 100%;
 }
 .main-insert-view{
-	padding: 0% 6% 4% 6%;
+	padding: 1% 6% 0% 6%;
 	text-align: justify;
 }
 .status, .label {

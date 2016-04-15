@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="/css/honeypot.css" type="text/css">
 </head>
 <body>
-<div layout="row" id="wrapper" ng-controller="AppCtrl" layout="column" ng-cloak>
+<div layout="row" id="wrapper" ng-controller="AppCtrl" ng-cloak>
     <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop md-whiteframe="4">
 	  <a ng-click="href('/'); toggleLeft()">
 		<header class="nav-header">
@@ -77,7 +77,7 @@
 		</div>
 	  </md-toolbar>
 	  
-	  <md-content class="main-insert-view" ng-view>
+	  <md-content class="main-insert-view" ng-view></md-content>
 	</div>
 </div>
 <noscript>
