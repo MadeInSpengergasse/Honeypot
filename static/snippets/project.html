@@ -14,7 +14,7 @@
                 <p>{{ todo.title }}</p>
                 <p class="md-secondary">#{{ todo.id }}</p>
             </md-list-item>
-            <span ng-hide="todos.length > 0">No item in list.</span>
+            <span ng-hide="todos.length > 0" class="list-empty-notice">No item in list.</span>
         </md-list>
     </md-content>
 </div>

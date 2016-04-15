@@ -4,10 +4,7 @@
         <label>Name</label>
         <input ng-model="label_name" required>
     </md-input-container>
-    <md-input-container class="md-block">
-        <label>Color</label>
-        <div md-color-picker ng-model="label_color"></div>
-    </md-input-container>
+    <div md-color-picker ng-model="label_color" label="Color"></div>
     <md-dialog-actions layout="row">
         <md-button class="md-raised" ng-click="cancel()">
             Cancel
