@@ -10,10 +10,9 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 	background: #ffcc80; /* Gecko Browsers */
 }
 .md-sidenav-left, md-toolbar, img{
-	-webkit-user-select: none; /* Chrome all / Safari all / Opera some */
-	-moz-user-select: none; /* Firefox all */
+	-webkit-user-select: none; /* Chrome / Safari / Opera */
+	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE 10+ */
-	-o-user-select: none; /* Opera some */
 	user-select: none;
 }
 
@@ -91,13 +90,12 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 /*---------*/
 h2{
 	font-weight: normal;
-	font-style: light;
 }
 #wrapper{
 	height: 100%;
 }
 .main-insert-view{
-	padding: 0% 6% 4% 6%;
+	padding: 0 6% 4% 6%;
 	text-align: justify;
 }
 .status, .label {
@@ -140,4 +138,11 @@ h2{
 .add-project-dialog, .add-todo-dialog, .add-milestone-dialog, .add-label-dialog {
     min-width: 500px;
     margin: 10px;
+}
+
+.event-icons {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-right: 5px;
+    -webkit-user-select: none;
 }

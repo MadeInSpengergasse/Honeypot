@@ -4,15 +4,14 @@
         <md-button ng-click="add_project()" class="md-raised md-primary">Add project</md-button>
         <md-divider></md-divider>
         <md-list>
-            <div ng-repeat="project in projects">
-                <md-list-item ng-href="#/project/{{ project.id }}">
-                    <div class="status" ng-class="project.status == 0 ? 'status-open' : 'status-closed'">{{
-                        status_strings[project.status] }}
-                    </div>
-                    <p> {{ project.title }} </p>
-                    <p class="md-secondary">#{{ project.id }}</p>
-                </md-list-item>
-            </div>
+            <md-list-item ng-href="#/project/{{ project.id }}" ng-repeat="project in projects">
+                <div class="status" ng-class="project.status == 0 ? 'status-open' : 'status-closed'">{{
+                    status_strings[project.status] }}
+                </div>
+                <p> {{ project.title }} </p>
+                <p class="md-secondary">#{{ project.id }}</p>
+            </md-list-item>
+            <span ng-hide="projects.length > 0">No item in list.</span>
         </md-list>
     </md-content>
 </div>
