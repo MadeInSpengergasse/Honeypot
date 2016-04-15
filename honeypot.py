@@ -417,7 +417,7 @@ def main():
             search = "%"
         else:
             search = "%" + flask.request.args.get("name") + "%"
-        res = get_db().execute("SELECT u_id, u_name FROM user WHERE u_name LIKE ? COLLATE nocase",
+        res = get_db().execute("SELECT u_id, u_name FROM user WHERE u_name LIKE ? COLLATE nocase LIMIT 10",
                                (search,)).fetchall()
         ret = []
         for tupl in res:

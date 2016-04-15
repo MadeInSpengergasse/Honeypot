@@ -1,5 +1,13 @@
 var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ng-showdown', 'mdColorPicker', 'crumble']);
 
+app.factory('Page', function() {
+   var title = 'default';
+   return {
+     title: function() { return title; },
+     setTitle: function(newTitle) { title = newTitle + " - Honeypot" }
+   };
+});
+
 app.config(function ($routeProvider, $mdThemingProvider) {
     $routeProvider.when('/', {
         templateUrl: "/snippets/home.html",
@@ -45,8 +53,13 @@ app.config(function ($routeProvider, $mdThemingProvider) {
     });
 });
 
-app.controller("HomeController", function (crumble) {
+app.controller("TitleController", function($scope, Page) {
+    $scope.Page = Page;
+});
+
+app.controller("HomeController", function (crumble, Page) {
     crumble.update();
+    Page.setTitle("Home");
 });
 
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log, crumble) {
@@ -71,6 +84,13 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $log, crumble)
         }
         return route && angular.isDefined(route.parent) ? route.parent : getParent(path);
     };
+
+    var update = crumble.update;
+    crumble.update = function (context) {
+        update(context);
+        crumble.trail.shift();
+    };
+
 
     $scope.toggleLeft = buildDelayedToggler('left');
     /**
@@ -124,14 +144,18 @@ app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav) {
 
 /* Luca's stuff */
 /*--------------*/
-app.controller("CatchAllCtrl", function ($scope, $routeParams, crumble) {
+app.controller("CatchAllCtrl", function ($scope, $rootScope, $routeParams, crumble, Page) {
     console.log("CatchAll");
     $scope.templatePath = "snippets/" + $routeParams.templatePath + ".html";
     crumble.update({lowest_title: $routeParams.templatePath});
+    Page.setTitle($rootScope.title_dict[$routeParams.templatePath]);
 });
 
 app.controller("HeaderController", function ($rootScope, $scope, $http, $location, $mdDialog, crumble) {
     $rootScope.status_strings = ["Open", "Closed"];
+    $rootScope.title_dict = {};
+    $rootScope.title_dict["labels"] = "Labels";
+    $rootScope.title_dict["projects"] = "Projects";
     $http.get("/api/get_client_id").success(function (data) {
         $scope.client_id = data;
         $scope.github_login_url = "https://github.com/login/oauth/authorize?scope=user:email&client_id=" + data;
@@ -275,9 +299,10 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
     }
 });
 
-app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location, $rootScope) {
+app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $location, $rootScope, Page) {
     $scope.id = $routeParams.project_id;
     $http.get("/api/get_project", {params: {project_id: $routeParams.project_id}}).success(function (data) {
+        Page.setTitle(data.title);
         $rootScope.handle_crumble($scope.id, undefined, data.title, $scope.id);
         $scope.project = data;
         console.log(data);
@@ -307,7 +332,7 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
     };
     $scope.remove_project = function (confirm) {
         console.log("REMOVE PROJECT: " + confirm);
-        if(confirm === false) return;
+        if (confirm === false) return;
         $http.post("/api/remove_project", {project_id: $scope.id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
@@ -344,9 +369,15 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
             });
         };
         $scope.get_users = function (name) {
+            var parameters;
+            if(name.length <= 1) {
+                parameters = {};
+            } else {
+                parameters = {params: {name: name}};
+            }
             console.log("get_users - " + name);
             console.log("Selected: " + $scope.selectedItem); // title description asignee milestone
-            $http.get("/api/get_users", {params: {name: name}}).success(function (data) {
+            $http.get("/api/get_users", parameters).success(function (data) {
                 $scope.users_filtered = data;
                 console.log(data);
             });
@@ -366,11 +397,12 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
     }
 });
 
-app.controller("TodoController", function ($scope, $rootScope, $routeParams, $http, crumble) {
+app.controller("TodoController", function ($scope, $rootScope, $routeParams, $http, Page) {
     $scope.id = $routeParams.todo_id;
     $scope.project_id = $routeParams.project_id;
     $scope.update_status_texts = ["Close todo", "Re-open todo"];
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function (data) {
+        Page.setTitle(data.title);
         $rootScope.handle_crumble($scope.project_id, data.title);
         console.log(data);
         $scope.todo = data;
@@ -411,9 +443,10 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
     }
 });
 
-app.controller("MilestonesController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $rootScope) {
+app.controller("MilestonesController", function ($scope, $routeParams, $http, $mdMedia, $mdDialog, $rootScope, Page) {
     console.log("MilestonesController");
     $scope.project_id = $routeParams.project_id;
+    Page.setTitle("Milestones");
     $rootScope.handle_crumble($scope.project_id);
     $http.get("/api/get_milestones", {params: {project_id: $scope.project_id}}).success(function (data) {
         console.log(data);
@@ -464,10 +497,11 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
     }
 });
 
-app.controller("MilestoneController", function ($scope, $routeParams, $http, $location, $rootScope) {
+app.controller("MilestoneController", function ($scope, $routeParams, $http, $location, $rootScope, Page) {
     $scope.project_id = $routeParams.project_id;
     $scope.milestone_id = $routeParams.milestone_id;
     $http.get("/api/get_milestone", {params: {milestone_id: $scope.milestone_id}}).success(function (data) {
+        Page.setTitle(data.title);
         $rootScope.handle_crumble($scope.project_id, data.title);
         console.log(data);
         $scope.milestone = data;
@@ -521,7 +555,7 @@ app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) 
     $scope.remove_label = function (confirm, label_id) {
         console.log("label_id: " + label_id);
         console.log(confirm);
-        if(confirm === false) return;
+        if (confirm === false) return;
         $http.post("/api/remove_label", {label_id: label_id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
