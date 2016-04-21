@@ -135,7 +135,7 @@ h2{
     vertical-align: middle;
 }
 
-.add-project-dialog, .add-todo-dialog, .add-milestone-dialog, .add-label-dialog {
+.add-dialog {
     min-width: 500px;
     margin: 10px;
 }
@@ -157,4 +157,6 @@ h2{
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+	cursor: default;
 }
