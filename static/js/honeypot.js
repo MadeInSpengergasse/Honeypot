@@ -1,7 +1,7 @@
 var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ng-showdown', 'mdColorPicker', 'crumble']);
 
 app.factory('Page', function() {
-   var title = 'default';
+   var title = 'Honeypot';
    return {
      title: function() { return title; },
      setTitle: function(newTitle) { title = newTitle + " - Honeypot" }
