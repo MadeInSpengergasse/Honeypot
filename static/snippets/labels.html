@@ -3,17 +3,17 @@
   <h2>Labels</h2>
   <md-button ng-click="add_label()" class="md-raised md-primary">Add Label</md-button>
   <md-button ng-click="add_category()" class="md-raised md-primary" ng-disabled="true">Add Category</md-button>
-  <md-list id="label-list" ng-cloak>
-	<md-divider id="divider"></md-divider>
-	<md-subheader class="subheader md-no-sticky">
+  <md-divider class="divider"></md-divider>
+  <md-list class="list-spacing">
+	<md-subheader ng-show="labels.length != 0" class="subheader md-no-sticky">
 	  General
 	  <md-button class="subheader-button" ng-click='showConfirm("Remove category", "Do you really want to remove this category? All associated labels will be removed too!", remove_category, $event, category.id);' ng-disabled="true">Remove</md-button>
 	</md-subheader>
-	<md-list-item class="secondary-button-padding" ng-repeat="label in labels">
-	  <md-icon aria-hidden="true" md-svg-src="images/color.svg" ng-style=" {'fill': label.color}"></md-icon>
+	<md-list-item  ng-repeat="label in labels">
+	  <md-icon aria-hidden="true" md-svg-src="images/color.svg" ng-style="{'fill': label.color}"></md-icon>
       <p>{{label.name}}</p>
       <md-button class="md-secondary" ng-click='showConfirm("Remove label", "Do you really want to remove this label?", remove_label, $event, label.id);'>Remove</md-button>
 	</md-list-item>
-      <span ng-hide="labels.length > 0" class="list-empty-notice">No item in list.</span>
   </md-list>
+  <span ng-show="labels.length == 0" class="list-empty-notice">You do not have any labels</span>
 </div>
