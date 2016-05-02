@@ -10,9 +10,11 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 	background: #ffcc80; /* Gecko Browsers */
 }
 .md-sidenav-left, md-toolbar, img{
-	-webkit-user-select: none; /* Chrome / Safari / Opera */
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* IE 10+ */
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none;   /* Chrome/Safari/Opera */
+	-khtml-user-select: none;    /* Konqueror */
+	-moz-user-select: none;      /* Firefox */
+	-ms-user-select: none;       /* Internet Explorer/Edge */
 	user-select: none;
 }
 
@@ -127,19 +129,16 @@ h2{
 	color: #ffffff;
 	background-color: #263238;
 }
-
 .small-profile-picture {
     height: 20px;
     width: 20px;
     border-radius: 10%;
     vertical-align: middle;
 }
-
 .add-dialog {
     min-width: 500px;
     margin: 10px;
 }
-
 .event-icons {
     display: inline-flex;
     vertical-align: middle;
@@ -148,9 +147,17 @@ h2{
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none;}
-
+    user-select: none;
+}
+.divider{
+	margin-top: 6px;
+}
+.list-spacing{
+	padding: 0px !important;
+}
 .list-empty-notice {
+	margin-top: 13px;
+	display: block;
     text-align: center;
 
     -webkit-user-select: none;
