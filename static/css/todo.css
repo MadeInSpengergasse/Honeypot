@@ -1,0 +1,10 @@
+.event-icons {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-right: 5px;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

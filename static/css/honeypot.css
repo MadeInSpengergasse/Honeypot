@@ -90,7 +90,7 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 
 /* Content */
 /*---------*/
-h2{
+h1, h2{
 	font-weight: normal;
 }
 #wrapper{
@@ -138,16 +138,6 @@ h2{
 .add-dialog {
     min-width: 500px;
     margin: 10px;
-}
-.event-icons {
-    display: inline-flex;
-    vertical-align: middle;
-    margin-right: 5px;
-
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 .divider{
 	margin-top: 6px;
