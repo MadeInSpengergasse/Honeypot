@@ -136,9 +136,13 @@ h2{
     vertical-align: middle;
 }
 .add-dialog {
-    min-width: 500px;
     margin: 10px;
 }
+
+.add-dialog-min-width {
+	min-width: 500px;
+}
+
 .event-icons {
     display: inline-flex;
     vertical-align: middle;
