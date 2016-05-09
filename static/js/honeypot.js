@@ -267,7 +267,7 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: useFullScreen,
-            locals: {projects: $scope.projects}
+            locals: {projects: $scope.projects, fullscreen: useFullScreen}
         });
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
@@ -277,8 +277,10 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    function AddProjectController($scope, $http, projects) {
+    function AddProjectController($scope, $http, projects, fullscreen) {
+        $scope.fullscreen = fullscreen;
         console.log("addprojectcontroller");
+        console.log($scope.fullscreen);
         $scope.cancel = function () {
             $mdDialog.hide()
         };
@@ -322,7 +324,7 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: useFullScreen,
-            locals: {todos: $scope.todos, project_id: $scope.project.id}
+            locals: {todos: $scope.todos, project_id: $scope.project.id, fullscreen: useFullScreen}
         });
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
@@ -342,7 +344,8 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
             }
         });
     };
-    function AddTodoController($scope, $http, todos, project_id) {
+    function AddTodoController($scope, $http, todos, project_id, fullscreen) {
+        $scope.fullscreen = fullscreen;
         console.log("addtodocontroller");
         $scope.cancel = function () {
             $mdDialog.hide()
@@ -463,7 +466,7 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: useFullScreen,
-            locals: {milestones: $scope.milestones, project_id: $scope.project_id}
+            locals: {milestones: $scope.milestones, project_id: $scope.project_id, fullscreen: useFullScreen}
         });
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
@@ -471,8 +474,9 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
             $scope.customFullscreen = (wantsFullScreen === true);
         });
     };
-    function AddMilestoneController($scope, $http, project_id, milestones) {
+    function AddMilestoneController($scope, $http, project_id, milestones, fullscreen) {
         console.log("addmilestonecontroller");
+        $scope.fullscreen = fullscreen;
         $scope.submit = function (title, description, startdate, enddate) {
             console.log(title + " - " + description + " - " + startdate + " - " + enddate);
             $http.post("/api/add_milestone", {
@@ -544,7 +548,7 @@ app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) 
             targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: useFullScreen,
-            locals: {labels: $scope.labels}
+            locals: {labels: $scope.labels, fullscreen: useFullScreen}
         });
         $scope.$watch(function () {
             return $mdMedia('xs') || $mdMedia('sm');
@@ -572,7 +576,8 @@ app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) 
 
         });
     };
-    function AddLabelController($scope, $http, labels) {
+    function AddLabelController($scope, $http, labels, fullscreen) {
+        $scope.fullscreen = fullscreen;
         console.log("addlabelcontroller");
         $scope.cancel = function () {
             $mdDialog.hide()
