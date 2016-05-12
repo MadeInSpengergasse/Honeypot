@@ -518,9 +518,10 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http, $lo
         var date = new Date(timestamp);
         return date.getShortMonthName() + " " + date.getDate() + ", " + date.getFullYear() + ", " + ("0" + date.getUTCHours()).slice(-2) + ":" + ("0" + date.getUTCMinutes()).slice(-2);
     };
-    $scope.remove_milestone = function () {
+    $scope.remove_milestone = function (confirm, milestone_id) {
         console.log("remove");
-        $http.post("/api/remove_milestone", {milestone_id: $scope.milestone_id}).success(function (data) {
+        if (confirm === false) return;
+        $http.post("/api/remove_milestone", {milestone_id: milestone_id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
                 $location.path("/project/" + $scope.project_id + "/milestones");

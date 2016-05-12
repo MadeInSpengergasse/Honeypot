@@ -1,5 +1,7 @@
 <div>
-    <p>Milestone</p>
+    <p>Milestone <b>{{milestone.title}}</b></p>
+    <p markdown-to-html="milestone.description"></p>
+    <p>Status: <b>{{status_strings[milestone.status]}}</b></p>
     <time datetime="{{milestone.starttime}}" title="{{timestamp_to_long_date(milestone.starttime)}}">{{timestamp_to_date(milestone.starttime)}}</time>
     <br>
     <time datetime="{{milestone.endtime}}">{{timestamp_to_date(milestone.endtime)}}</time>
