@@ -501,10 +501,15 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         print("Finishing because of 'test' argument.")
         return
+    if config.use_ssl:
+        ssl_context = ('server.crt', 'server.key')
+    else:
+        ssl_context = None
+
     try:
-        app.run(host='0.0.0.0',
-                port=5000,
-                # ssl_context=ssl_context,
+        app.run(host=config.host,
+                port=config.port,
+                ssl_context=ssl_context,
                 debug=config.debug)
     except OSError as err:
         print("[ERROR] " + err.strerror, file=sys.stderr)
