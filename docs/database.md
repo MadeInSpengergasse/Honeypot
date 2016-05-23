@@ -26,8 +26,7 @@ t_ts_closed (timestamp of closed) (can be null)
 m_id (unique id)
 m_title (big title)
 m_description (long-ish description)
-m_starttime (when it should be active)
-m_endtime (when it should be finished)
+m_duedate (when it should be finished)
 m_p_project
 m_status (closed?)
 

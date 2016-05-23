@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS milestone (
   m_id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   m_title       TEXT,
   m_description TEXT,
-  m_starttime   DATETIME,
-  m_endtime     DATETIME,
+  m_duedate     DATETIME,
   m_p_project   INTEGER,
   m_status      INTEGER NOT NULL,
 

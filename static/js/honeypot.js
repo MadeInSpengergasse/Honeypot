@@ -352,9 +352,8 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
         };
         $scope.submit = function (title, description, asignee, milestone) {
             console.log(title + " - " + description + " - " + asignee + " - " + milestone);
-            if (description == null) {
-                description = "";
-            }
+            if (description == null) description = "";
+
             $http.post("/api/add_todo", {
                 "title": title,
                 "description": description,
@@ -477,13 +476,15 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
     function AddMilestoneController($scope, $http, project_id, milestones, fullscreen) {
         console.log("addmilestonecontroller");
         $scope.fullscreen = fullscreen;
-        $scope.submit = function (title, description, startdate, enddate) {
-            console.log(title + " - " + description + " - " + startdate + " - " + enddate);
+
+        $scope.submit = function (title, description, duedate) {
+            if (description == null) description = "";
+
+            console.log(title + " - " + description + " - " + duedate);
             $http.post("/api/add_milestone", {
                 "title": title,
                 "description": description,
-                "startdate": startdate,
-                "enddate": enddate,
+                "duedate": duedate,
                 "project_id": project_id
             }).success(function (data) {
                 console.log(data);

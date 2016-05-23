@@ -137,10 +137,9 @@ def main():
         # TODO: Validation
         # Insert a milestone
         params = flask.request.json
-        print(params.get("startdate"))
         id = get_db().execute(
-            "INSERT INTO milestone (m_title, m_description, m_starttime, m_endtime, m_p_project, m_status) VALUES (?, ?, ?, ?, ?, ?)",
-            (params.get("title"), params.get("description"), params.get("startdate"), params.get("enddate"),
+            "INSERT INTO milestone (m_title, m_description, m_duedate, m_p_project, m_status) VALUES (?, ?, ?, ?, ?)",
+            (params.get("title"), params.get("description"), params.get("duedate"),
              params.get("project_id"), 0)).lastrowid
         get_db().commit()
         return flask.Response("{\"status\": \"ok\", \"id\": \"" + str(id) + "\"}", mimetype="application/json")
@@ -381,13 +380,13 @@ def main():
     def get_milestone():
         # TODO: Validation
         result = get_db().execute(
-            "SELECT m_title, m_description, m_starttime, m_endtime, m_status FROM milestone WHERE m_id=?",
+            "SELECT m_title, m_description, m_duedate, m_status FROM milestone WHERE m_id=?",
             (flask.request.args.get("milestone_id"),)).fetchone()
         if not result:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                                   mimetype="application/json")
-        return json.dumps({"title": result[0], "description": result[1], "starttime": result[2], "endtime": result[3],
-                           "status": result[4]})
+        return json.dumps({"title": result[0], "description": result[1], "duedate": result[2],
+                           "status": result[3]})
 
     @app.route('/api/get_projects', methods=['GET'])
     @flask_login.login_required
