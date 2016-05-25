@@ -1,3 +1,11 @@
+#content_left {
+	float: left;
+}
+
+#content_right {
+	float: right;
+}
+
 .event-icons {
     display: inline-flex;
     vertical-align: middle;

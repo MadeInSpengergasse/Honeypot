@@ -1,7 +1,62 @@
 <link rel="stylesheet" href="/css/todo.css" type="text/css">
 
-    <h2>{{ todo.title }}</h2>
-    <p>Todo Nr. {{ id }}</p>
+	<h2>#{{ id }} {{ todo.title }}</h2>
+	<md-divider></md-divider>
+
+	  <div id="content_left">
+		<form>
+		  <label>Status:</label>
+			<md-switch>
+			  {{ status_strings[todo.status] }}
+			</md-switch>
+		  <label>Milestone:</label>
+			<a href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone }}</a><br>
+		  <label>Asignee:</label>
+		  <md-chips ng-model="users[todo.asignee].name" readonly="true">
+		  </md-chips><br>
+		  <label>Labels:</label>
+			<md-chips ng-repeat="label in assigned_labels">
+			  <md-chip ng-style="{'background-color': labels[label].color}">{{labels[label].name}}</md-chip>
+			</md-chips><br>
+		  <label>Description:</label>
+			<p markdown-to-html="todo.description"></p>
+		</form>
+	  </div>
+			
+	  <div id="content_right">
+		<h2>Events</h2>
+		<div class="events" ng-repeat="event in events">
+		  <div ng-if="event.type == 0">
+			<p><i class="material-icons event-icons">lock_open</i>Opened by {{users[event.user].name}}</p>
+          </div>
+
+          <div ng-if="event.type == 1">
+			<p><i class="material-icons event-icons">lock</i>Closed by {{users[event.user].name}}</p>
+          </div>
+
+          <div ng-if="event.type == 2">
+            <p><i class="material-icons event-icons">comment</i>Comment by {{users[event.user].name}}, content: <div markdown-to-html="event.content"></div></p>
+          </div>
+		</div>
+		<p ng-hide="events.length">No event found.</p>
+		<md-tabs md-dynamic-height md-border-bottom>
+		  <md-tab label="write">
+			<md-input-container class="md-block">
+               <label>Comment</label>
+              <textarea ng-model="comment"></textarea>
+            </md-input-container>
+          </md-tab>
+          <md-tab label="preview">
+			<p ng-show="comment != null" markdown-to-html="comment"></p>
+            <p ng-show="comment == null">Nothing to preview.</p>
+          </md-tab>
+		</md-tabs>
+		<md-button ng-click="submit_comment(comment); comment = '';" class="md-raised md-primary">Submit Comment</md-button>
+		<md-button ng-click="update_status()" class="md-raised">{{update_status_texts[todo.status]}}</md-button>
+	  </div>
+  
+  
+	<!--
     <p markdown-to-html="todo.description"></p>
     <p>Status: {{ status_strings[todo.status] }}</p>
     <p>Milestone: <a href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone }}</a></p>
@@ -42,3 +97,4 @@
     </md-tabs>
     <md-button ng-click="submit_comment(comment); comment = '';" class="md-raised md-primary">Submit Comment</md-button>
     <md-button ng-click="update_status()" class="md-raised">{{update_status_texts[todo.status]}}</md-button>
+	!-->
