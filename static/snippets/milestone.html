@@ -2,8 +2,15 @@
     <p>Milestone <b>{{milestone.title}}</b></p>
     <p markdown-to-html="milestone.description"></p>
     <p>Status: <b>{{status_strings[milestone.status]}}</b></p>
-    <p ng-show="milestone.duedate != undefined">Due date: <time datetime="{{milestone.duedate}}" title="{{timestamp_to_long_date(milestone.duedate)}}">{{timestamp_to_date(milestone.duedate)}}</time></p>
+    <p ng-show="milestone.duedate != undefined">Due date:
+        <time datetime="{{milestone.duedate}}" title="{{timestamp_to_long_date(milestone.duedate)}}">
+            {{timestamp_to_date(milestone.duedate)}}
+        </time>
+    </p>
     <p ng-show="milestone.duedate == undefined">No due date!</p>
     <br>
-    <md-button class="md-raised" ng-click='showConfirm("Remove milestone", "Do you really want to remove this milestone?", remove_milestone, $event);'>Remove</md-button>
+    <md-button class="md-raised"
+               ng-click='showConfirm("Remove milestone", "Do you really want to remove this milestone?", remove_milestone, $event);'>
+        Remove
+    </md-button>
 </div>

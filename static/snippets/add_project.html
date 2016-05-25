@@ -5,17 +5,17 @@
         <input ng-model="project_name">
     </md-input-container>
     <md-tabs md-dynamic-height md-border-bottom>
-      <md-tab label="write">
-    <md-input-container class="md-block">
-        <label>Description</label>
-        <textarea ng-model="project_description"></textarea>
-    </md-input-container>
-    </md-tab>
+        <md-tab label="write">
+            <md-input-container class="md-block">
+                <label>Description</label>
+                <textarea ng-model="project_description"></textarea>
+            </md-input-container>
+        </md-tab>
         <md-tab label="preview">
-             <p ng-show="project_description != null" markdown-to-html="project_description"></p>
+            <p ng-show="project_description != null" markdown-to-html="project_description"></p>
             <p ng-show="project_description == null">Nothing to preview.</p>
         </md-tab>
-        </md-tabs>
+    </md-tabs>
     <md-dialog-actions layout="row">
         <md-button class="md-raised" ng-click="cancel()">
             Cancel

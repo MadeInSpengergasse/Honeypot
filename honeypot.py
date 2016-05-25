@@ -104,8 +104,8 @@ def main():
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Missing title or project_id.\"}",
                                   mimetype="application/json")
         todo_id = get_db().execute(
-            "INSERT INTO todo (t_title, t_description, t_u_asignee, t_m_milestone, t_status, t_p_project) VALUES (?, ?, ?, ?, ?, ?)",
-            (params.get("title"), params.get("description"), params.get("asignee"), params.get("milestone"), 0,
+            "INSERT INTO todo (t_title, t_description, t_u_assignee, t_m_milestone, t_status, t_p_project) VALUES (?, ?, ?, ?, ?, ?)",
+            (params.get("title"), params.get("description"), params.get("assignee"), params.get("milestone"), 0,
              params.get("project_id"))).lastrowid
         get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id) VALUES (?, ?, ?)",
                          (0, flask_login.current_user.id, todo_id))
@@ -190,8 +190,8 @@ def main():
         # Update values in db
         params = flask.request.json
         get_db().execute(
-            "UPDATE todo SET t_title=?, t_description=?, t_u_asignee=?, t_m_milestone=? WHERE t_id=?",
-            (params.get("title"), params.get("description"), params.get("asignee"), params.get("milestone"),
+            "UPDATE todo SET t_title=?, t_description=?, t_u_assignee=?, t_m_milestone=? WHERE t_id=?",
+            (params.get("title"), params.get("description"), params.get("assignee"), params.get("milestone"),
              params.get("id")))
         get_db().commit()
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
@@ -242,6 +242,16 @@ def main():
     def update_project():
         return "Not implemented."
         # TODO: Implement
+
+    @app.route('/api/update_todo_assignee', methods=['POST'])
+    @flask_login.login_required
+    def update_todo_assignee():
+        # TODO: Validation / Testing
+        # Delete from todo_and_label with label & todo id
+        label_id = flask.request.json.get("label_id")
+        todo_id = flask.request.json.get("todo_id")
+        get_db().execute("DELETE FROM todo_and_label WHERE tl_t_todo=? AND tl_l_label=?", (todo_id, label_id))
+        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
 
     # -------------------------- REMOVE --------------------------
 
@@ -307,20 +317,30 @@ def main():
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
         # TODO: Test
 
+    @app.route('/api/remove_label_from_todo', methods=['POST'])
+    @flask_login.login_required
+    def remove_label_from_todo():
+        # TODO: Validation / Testing
+        # Delete from todo_and_label with label & todo id
+        label_id = flask.request.json.get("label_id")
+        todo_id = flask.request.json.get("todo_id")
+        get_db().execute("DELETE FROM todo_and_label WHERE tl_t_todo=? AND tl_l_label=?", (todo_id, label_id))
+        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+
     # -------------------------- GET --------------------------
 
     @app.route('/api/get_todo_detail', methods=['GET'])
     @flask_login.login_required
     def get_details():
-        # TODO: get asignee name (subselect)
+        # TODO: get assignee name (subselect)
         # TODO: Validation
         response = get_db().execute(
-            "SELECT t.t_id, t.t_title, t.t_description, t.t_u_asignee, t.t_m_milestone, t.t_status FROM todo t WHERE t.t_id=?",
+            "SELECT t.t_id, t.t_title, t.t_description, t.t_u_assignee, t.t_m_milestone, t.t_status FROM todo t WHERE t.t_id=?",
             (flask.request.args.get("id"),)).fetchone()
         if response is None:
             return flask.Response("{\"status\": \"error\", \"error_message\": \"Not found.\"}",
                                   mimetype="application/json")
-        ret = {"id": response[0], "title": response[1], "description": response[2], "asignee": response[3],
+        ret = {"id": response[0], "title": response[1], "description": response[2], "assignee": response[3],
                "milestone": response[4], "status": response[5]}
         return flask.Response(json.dumps(ret), mimetype="application/json")
 

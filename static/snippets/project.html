@@ -2,15 +2,18 @@
 <p markdown-to-html="project.description"></p>
 <md-button ng-click="add_todo()" class="md-raised md-primary">Add todo</md-button>
 <md-button ng-click='href("/project/"+id+"/milestones")' class="md-raised">Milestones</md-button><!--<br hide-gt-md/>-->
-<md-button ng-click='showConfirm("Remove project", "Do you really want to remove this project? All associated todos and milestones will be removed!", remove_project, $event)' class="md-raised md-warn">Remove</md-button>
+<md-button
+        ng-click='showConfirm("Remove project", "Do you really want to remove this project? All associated todos and milestones will be removed!", remove_project, $event)'
+        class="md-raised md-warn">Remove
+</md-button>
 <md-divider class="divider"></md-divider>
 <md-list class="list-spacing" ng-cloak>
-  <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}" ng-repeat="todo in todos">
-	<div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">
-	  {{ status_strings[todo.status] }}
-	</div>
-	<p>{{ todo.title }}</p>
-	<p class="md-secondary">#{{ todo.id }}</p>
-  </md-list-item>
+    <md-list-item ng-href="#/project/{{ id }}/todo/{{ todo.id }}" ng-repeat="todo in todos">
+        <div class="status" ng-class="todo.status == 0 ? 'status-open' : 'status-closed'">
+            {{ status_strings[todo.status] }}
+        </div>
+        <p>{{ todo.title }}</p>
+        <p class="md-secondary">#{{ todo.id }}</p>
+    </md-list-item>
 </md-list>
 <span ng-show="todos.length == 0" class="list-empty-notice">You do not have any todos</span>

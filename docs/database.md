@@ -16,7 +16,7 @@ __m <-> n relationship between labels and todos!__
 t_id (unique id) (not null)
 t_title (big title) (not null, no empty string)
 t_description (longer text) (not null, only empty string)
-t_u_asignee (user id; more than one?) (can be null)
+t_u_assignee (user id; more than one?) (can be null)
 t_m_milestone (milestone id) (can be null)
 t_status (closed?) (0=open, 1=closed)
 t_ts_created (timestamp of created) (not null)

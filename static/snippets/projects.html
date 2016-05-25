@@ -1,15 +1,15 @@
 <div ng-controller="ProjectsController">
-  <h2>All Projects</h2>
-  <md-button ng-click="add_project()" class="md-raised md-primary">Add project</md-button>
-  <md-divider class="divider"></md-divider>
-  <md-list class="list-spacing" ng-cloak>
-	<md-list-item ng-href="#/project/{{ project.id }}" ng-repeat="project in projects">
+    <h2>All Projects</h2>
+    <md-button ng-click="add_project()" class="md-raised md-primary">Add project</md-button>
+    <md-divider class="divider"></md-divider>
+    <md-list class="list-spacing" ng-cloak>
+        <md-list-item ng-href="#/project/{{ project.id }}" ng-repeat="project in projects">
 	  <span class="status" ng-class="project.status == 0 ? 'status-open' : 'status-closed'">{{
 		status_strings[project.status] }}
 	  </span>
-	  <p> {{ project.title }} </p>
-	  <p class="md-secondary">#{{ project.id }}</p>
-	</md-list-item>
-  </md-list>
-  <span ng-show="projects.length == 0" class="list-empty-notice">You do not have any projects</span>
+            <p> {{ project.title }} </p>
+            <p class="md-secondary">#{{ project.id }}</p>
+        </md-list-item>
+    </md-list>
+    <span ng-show="projects.length == 0" class="list-empty-notice">You do not have any projects</span>
 </div>

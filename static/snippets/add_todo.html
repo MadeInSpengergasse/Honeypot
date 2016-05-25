@@ -5,14 +5,14 @@
         <input ng-model="title">
     </md-input-container>
     <md-autocomplete
-            md-selected-item="asignee"
+            md-selected-item="assignee"
             md-search-text-change="get_users(searchText)"
             md-search-text="searchText"
             md-items="user in users_filtered"
             md-item-text="user.name"
-            md-floating-label="Asignee"
+            md-floating-label="assignee"
             md-delay="100"
-            placeholder="Asignee">
+            placeholder="assignee">
         <md-item-template>
             <img ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?s=10" class="small-profile-picture">
             <span md-highlight-text="searchText" md-highlight-flags="^i">{{user.name}}</span>
@@ -53,7 +53,7 @@
         <md-button class="md-raised" ng-click="cancel()">
             Cancel
         </md-button>
-        <md-button class="md-primary md-raised" ng-click="submit(title, description, asignee.id, milestone.id)">
+        <md-button class="md-primary md-raised" ng-click="submit(title, description, assignee.id, milestone.id)">
             Submit
         </md-button>
     </md-dialog-actions>

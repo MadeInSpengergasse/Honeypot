@@ -1,73 +1,59 @@
 <link rel="stylesheet" href="/css/todo.css" type="text/css">
 
-	<h2>#{{ id }} {{ todo.title }}</h2>
-	<md-divider></md-divider>
+<h2>#{{ id }} {{ todo.title }}</h2>
+<md-divider></md-divider>
 
-	  <div id="content_left">
-		<form>
-		  <label>Status:</label>
-			<md-switch>
-			  {{ status_strings[todo.status] }}
-			</md-switch>
-		  <label>Milestone:</label>
-			<a href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone }}</a><br>
-		  <label>Asignee:</label>
-		  <md-chips ng-model="users[todo.asignee].name" readonly="true">
-		  </md-chips><br>
-		  <label>Labels:</label>
-			<md-chips ng-repeat="label in assigned_labels">
-			  <md-chip ng-style="{'background-color': labels[label].color}">{{labels[label].name}}</md-chip>
-			</md-chips><br>
-		  <label>Description:</label>
-			<p markdown-to-html="todo.description"></p>
-		</form>
-	  </div>
-			
-	  <div id="content_right">
-		<h2>Events</h2>
-		<div class="events" ng-repeat="event in events">
-		  <div ng-if="event.type == 0">
-			<p><i class="material-icons event-icons">lock_open</i>Opened by {{users[event.user].name}}</p>
-          </div>
+<div id="content_left">
+    <!-- Do we need that form? -->
+    <form>
+        <label>Status:</label>
+        <!-- Don't ask why 0 is true and 1 is false... -->
+        <md-switch ng-change="update_status();" ng-model="todo.status" ng-true-value="0" ng-false-value="1">
+            {{ status_strings[todo.status] }}
+        </md-switch>
+        <label>Milestone:</label>
+        <a ng-if="todo.milestone" href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone
+            }}</a>
+        <i ng-if="!todo.milestone">No milestone!</i>
+        <br><br>
+        <label>Assignee:</label>
+        <md-chips md-max-chips="1" ng-model="todo.assignee_list" md-autocomplete-snap md-require-match="true"
+                  md-on-remove="remove_assignee();" placeholder="Assign somebody!" secondary-placeholder="">
+            <md-autocomplete
+                    md-selected-item="selectedItem"
+                    md-search-text="searchText"
+                    md-search-text-change="get_users(searchText)"
+                    md-items="user in users_filtered"
+                    md-item-text="user.name">
+                <span md-highlight-text="searchText">{{user.name}}</span>
+            </md-autocomplete>
+            <md-chip-template>
+                <img ng-src="https://avatars.githubusercontent.com/u/{{users[$chip].id}}?s=10"
+                     class="small-profile-picture">
+                <span>{{users[$chip].name}}</span>
+            </md-chip-template>
+        </md-chips>
+        <br>
+        <label>Labels:</label>
+        <md-chips ng-model="assigned_labels" md-autocomplete-snap md-require-match="true"
+                  placeholder="Add an item">
+            <md-autocomplete
+                    md-selected-item="selectedItem"
+                    md-search-text="searchText"
+                    md-items="label in labels"
+                    md-item-text="label.name">
+                <span md-highlight-text="searchText">{{label.name}}</span>
+            </md-autocomplete>
+            <md-chip-template ng-style="{'background-color': labels[$chip].color}">{{labels[$chip].name}}
+            </md-chip-template>
+        </md-chips>
+        <br>
+        <label>Description:</label>
+        <p markdown-to-html="todo.description"></p>
+    </form>
+</div>
 
-          <div ng-if="event.type == 1">
-			<p><i class="material-icons event-icons">lock</i>Closed by {{users[event.user].name}}</p>
-          </div>
-
-          <div ng-if="event.type == 2">
-            <p><i class="material-icons event-icons">comment</i>Comment by {{users[event.user].name}}, content: <div markdown-to-html="event.content"></div></p>
-          </div>
-		</div>
-		<p ng-hide="events.length">No event found.</p>
-		<md-tabs md-dynamic-height md-border-bottom>
-		  <md-tab label="write">
-			<md-input-container class="md-block">
-               <label>Comment</label>
-              <textarea ng-model="comment"></textarea>
-            </md-input-container>
-          </md-tab>
-          <md-tab label="preview">
-			<p ng-show="comment != null" markdown-to-html="comment"></p>
-            <p ng-show="comment == null">Nothing to preview.</p>
-          </md-tab>
-		</md-tabs>
-		<md-button ng-click="submit_comment(comment); comment = '';" class="md-raised md-primary">Submit Comment</md-button>
-		<md-button ng-click="update_status()" class="md-raised">{{update_status_texts[todo.status]}}</md-button>
-	  </div>
-  
-  
-	<!--
-    <p markdown-to-html="todo.description"></p>
-    <p>Status: {{ status_strings[todo.status] }}</p>
-    <p>Milestone: <a href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone }}</a></p>
-    <p>Asignee: {{ users[todo.asignee].name }}</p>
-    <md-divider></md-divider>
-    <h2>Labels</h2>
-    <div ng-repeat="label in assigned_labels">
-        <p class="label" ng-style="{'background-color': labels[label].color}">{{labels[label].name}}</p>
-    </div>
-    <p ng-hide="assigned_labels.length">No label assigned.</p>
-    <md-divider></md-divider>
+<div id="content_right">
     <h2>Events</h2>
     <div class="events" ng-repeat="event in events">
         <div ng-if="event.type == 0">
@@ -79,7 +65,9 @@
         </div>
 
         <div ng-if="event.type == 2">
-            <p><i class="material-icons event-icons">comment</i>Comment by {{users[event.user].name}}, content: <div markdown-to-html="event.content"></div></p>
+            <p><i class="material-icons event-icons">comment</i>Comment by {{users[event.user].name}}, content:
+            <div markdown-to-html="event.content"></div>
+            </p>
         </div>
     </div>
     <p ng-hide="events.length">No event found.</p>
@@ -96,5 +84,4 @@
         </md-tab>
     </md-tabs>
     <md-button ng-click="submit_comment(comment); comment = '';" class="md-raised md-primary">Submit Comment</md-button>
-    <md-button ng-click="update_status()" class="md-raised">{{update_status_texts[todo.status]}}</md-button>
-	!-->
+</div>
