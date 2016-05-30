@@ -18,7 +18,7 @@
         <br><br>
         <label>Assignee:</label>
         <md-chips md-max-chips="1" ng-model="todo.assignee_list" md-autocomplete-snap md-require-match="true"
-                  md-on-remove="remove_assignee();" placeholder="Assign somebody!" secondary-placeholder="">
+                  md-on-remove="remove_assignee();" placeholder="Assign somebody!" secondary-placeholder="" md-transform-chip="md_chips_to_id($chip)">
             <md-autocomplete
                     md-selected-item="selectedItem"
                     md-search-text="searchText"
@@ -31,20 +31,24 @@
                 <img ng-src="https://avatars.githubusercontent.com/u/{{users[$chip].id}}?s=10"
                      class="small-profile-picture">
                 <span>{{users[$chip].name}}</span>
+                <!--<span>{{$chip}}</span>-->
             </md-chip-template>
         </md-chips>
         <br>
         <label>Labels:</label>
         <md-chips ng-model="assigned_labels" md-autocomplete-snap md-require-match="true"
-                  placeholder="Add an item">
+                  placeholder="Add an item" md-transform-chip="md_chips_to_id($chip)">
             <md-autocomplete
                     md-selected-item="selectedItem"
                     md-search-text="searchText"
-                    md-items="label in labels"
+                    md-items="label in labels_unsorted"
                     md-item-text="label.name">
                 <span md-highlight-text="searchText">{{label.name}}</span>
             </md-autocomplete>
-            <md-chip-template ng-style="{'background-color': labels[$chip].color}">{{labels[$chip].name}}
+            <md-chip-template ng-style="{'background-color': labels[$chip].color}">
+                <span>{{labels[$chip.id].name}}</span>
+                <span>{{labels[$chip.id]}}</span> <!-- TODO: something like a hashmap for labels / labels_unsorted -->
+                <span>{{$chip}}</span>
             </md-chip-template>
         </md-chips>
         <br>

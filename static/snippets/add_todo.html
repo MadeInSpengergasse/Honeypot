@@ -10,9 +10,9 @@
             md-search-text="searchText"
             md-items="user in users_filtered"
             md-item-text="user.name"
-            md-floating-label="assignee"
+            md-floating-label="Assignee"
             md-delay="100"
-            placeholder="assignee">
+            placeholder="Assignee">
         <md-item-template>
             <img ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?s=10" class="small-profile-picture">
             <span md-highlight-text="searchText" md-highlight-flags="^i">{{user.name}}</span>

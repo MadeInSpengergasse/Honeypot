@@ -414,7 +414,11 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
         console.log(data);
         // data.status = data.status == 1; // convert 0/1 to boolean
         $scope.todo = data;
-        $scope.todo.assignee_list = [$scope.todo.assignee];
+        if($scope.todo.assignee == null) {
+            $scope.todo.assignee_list = [];
+        } else {
+            $scope.todo.assignee_list = [$scope.todo.assignee];
+        }
         console.log($scope.todo.assignee_list)
     });
     $http.get("/api/get_events", {params: {id: $scope.id}}).success(function (data) {
@@ -431,6 +435,9 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
             arr[entry.id] = entry;
         });
         $scope.labels = arr;
+        $scope.labels_unsorted = data;
+        console.log("labels: ");
+        console.log($scope.labels);
     });
     $scope.update_status = function () {
         console.log("update status");
@@ -466,12 +473,14 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
             console.log(data);
         });
     };
-
     $scope.remove_assignee = function (test) {
         console.log("REMOVE assignee: " + test);
         // $http.post("/api/remove_assignee").success(function(data) {
 
         // }
+    };
+    $scope.md_chips_to_id = function(chip) {
+        return chip.id;
     }
 });
 
