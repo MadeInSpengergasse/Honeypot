@@ -174,7 +174,7 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
             console.log("not authorized");
             return;
         }
-        var arr = [];
+        var arr = {};
         data.forEach(function (value) {
             arr[value.id] = value;
         });
@@ -430,7 +430,7 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
         console.log(data);
     });
     $http.get("/api/get_labels").success(function (data) {
-        var arr = [];
+        var arr = {};
         data.forEach(function (entry) {
             arr[entry.id] = entry;
         });
@@ -473,14 +473,48 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
             console.log(data);
         });
     };
-    $scope.remove_assignee = function (test) {
-        console.log("REMOVE assignee: " + test);
-        // $http.post("/api/remove_assignee").success(function(data) {
-
-        // }
-    };
     $scope.md_chips_to_id = function(chip) {
         return chip.id;
+    };
+    $scope.chip_add_label = function(label_id) {
+        console.log("ADD LABEL!!!!");
+        $http.post("/api/add_label_to_todo", {label_id: label_id, todo_id: parseInt($scope.id)}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
+    };
+    $scope.chip_remove_label = function(label_id) {
+        console.log("REMOVE LABEL!!!!");
+        $http.post("/api/remove_label_from_todo", {label_id: label_id, todo_id: parseInt($scope.id)}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
+    };
+    $scope.chip_add_assignee = function(new_assignee) {
+        console.log("ADD ASSIGNEE!!!!");
+        $http.post("/api/update_todo_assignee", {todo_id: parseInt($scope.id), assignee: new_assignee}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
+    };
+    $scope.chip_remove_assignee = function() {
+        console.log("REMOVE ASSIGNEE!!!!");
+        $http.post("/api/update_todo_assignee", {todo_id: parseInt($scope.id), assignee: null}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
     }
 });
 
@@ -517,6 +551,10 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
         $scope.fullscreen = fullscreen;
 
         $scope.submit = function (title, description, duedate) {
+            if (title == null) {
+                alert("Please enter a title!");
+                return;
+            }
             if (description == null) description = "";
 
             console.log(title + " - " + description + " - " + duedate);

@@ -179,7 +179,14 @@ def main():
         label_id = flask.request.json.get("label_id")
         todo_id = flask.request.json.get("todo_id")
         get_db().execute("INSERT INTO todo_and_label (tl_t_todo, tl_l_label) VALUES (?, ?)", (todo_id, label_id))
-        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+        e_id = get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id, e_content) VALUES (?, ?, ?, ?)",
+                                (3, flask_login.current_user.id, todo_id, label_id)).lastrowid
+        get_db().commit()
+        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?",
+                               (e_id,)).fetchone()
+        return flask.Response("{\"status\": \"ok\", \"new_event\": " + json.dumps(
+            {"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]}) + "}",
+                              mimetype="application/json")
 
     # -------------------------- UPDATE --------------------------
 
@@ -247,11 +254,26 @@ def main():
     @flask_login.login_required
     def update_todo_assignee():
         # TODO: Validation / Testing
-        # Delete from todo_and_label with label & todo id
-        label_id = flask.request.json.get("label_id")
+        # Updates the assignee of a todo
         todo_id = flask.request.json.get("todo_id")
-        get_db().execute("DELETE FROM todo_and_label WHERE tl_t_todo=? AND tl_l_label=?", (todo_id, label_id))
-        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+        new_assignee = flask.request.json.get("assignee")
+        if new_assignee is None:  # when the assignee is removed
+            # previous assignee
+            datatosave = get_db().execute("SELECT t_u_assignee FROM todo WHERE t_id=?", (todo_id,)).fetchone()[0]
+            e_type = 6
+        else:
+            # new (assigneed) assignee
+            datatosave = new_assignee
+            e_type = 5
+        get_db().execute("UPDATE todo SET t_u_assignee=? WHERE t_id=?", (new_assignee, todo_id))
+        e_id = get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id, e_content) VALUES (?, ?, ?, ?)",
+                                (e_type, flask_login.current_user.id, todo_id, datatosave)).lastrowid
+        get_db().commit()
+        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?",
+                               (e_id,)).fetchone()
+        return flask.Response("{\"status\": \"ok\", \"new_event\": " + json.dumps(
+            {"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]}) + "}",
+                              mimetype="application/json")
 
     # -------------------------- REMOVE --------------------------
 
@@ -325,7 +347,14 @@ def main():
         label_id = flask.request.json.get("label_id")
         todo_id = flask.request.json.get("todo_id")
         get_db().execute("DELETE FROM todo_and_label WHERE tl_t_todo=? AND tl_l_label=?", (todo_id, label_id))
-        return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
+        e_id = get_db().execute("INSERT INTO event (e_type, e_u_id, e_t_id, e_content) VALUES (?, ?, ?, ?)",
+                                (4, flask_login.current_user.id, todo_id, label_id)).lastrowid
+        get_db().commit()
+        res = get_db().execute("SELECT e_type, e_u_id, e_content, e_timestamp FROM event WHERE e_id=?",
+                               (e_id,)).fetchone()
+        return flask.Response("{\"status\": \"ok\", \"new_event\": " + json.dumps(
+            {"type": res[0], "user": res[1], "content": res[2], "timestamp": res[3]}) + "}",
+                              mimetype="application/json")
 
     # -------------------------- GET --------------------------
 

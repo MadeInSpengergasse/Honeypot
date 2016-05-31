@@ -12,19 +12,23 @@
             {{ status_strings[todo.status] }}
         </md-switch>
         <label>Milestone:</label>
-        <a ng-if="todo.milestone" href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">{{ todo.milestone
-            }}</a>
+        <a ng-if="todo.milestone" href="#/project/{{ project_id }}/milestone/{{ todo.milestone }}">
+            {{ todo.milestone }}
+        </a>
         <i ng-if="!todo.milestone">No milestone!</i>
         <br><br>
         <label>Assignee:</label>
         <md-chips md-max-chips="1" ng-model="todo.assignee_list" md-autocomplete-snap md-require-match="true"
-                  md-on-remove="remove_assignee();" placeholder="Assign somebody!" secondary-placeholder="" md-transform-chip="md_chips_to_id($chip)">
+                  md-on-add="chip_add_assignee($chip)" md-on-remove="chip_remove_assignee()"
+                  placeholder="Assign somebody!" secondary-placeholder="" md-transform-chip="md_chips_to_id($chip)">
             <md-autocomplete
                     md-selected-item="selectedItem"
                     md-search-text="searchText"
                     md-search-text-change="get_users(searchText)"
                     md-items="user in users_filtered"
-                    md-item-text="user.name">
+                    md-item-text="user.name"
+                    <!--Disables the input if md-max-chips (=1) is reached-->
+                    ng-hide="todo.assignee_list.length == 1">
                 <span md-highlight-text="searchText">{{user.name}}</span>
             </md-autocomplete>
             <md-chip-template>
@@ -37,7 +41,8 @@
         <br>
         <label>Labels:</label>
         <md-chips ng-model="assigned_labels" md-autocomplete-snap md-require-match="true"
-                  placeholder="Add an item" md-transform-chip="md_chips_to_id($chip)">
+                  placeholder="Add an item" md-transform-chip="md_chips_to_id($chip)" md-on-add="chip_add_label($chip)"
+                  md-on-remove="chip_remove_label($chip)" mdChipsDisableInput>
             <md-autocomplete
                     md-selected-item="selectedItem"
                     md-search-text="searchText"
@@ -46,9 +51,8 @@
                 <span md-highlight-text="searchText">{{label.name}}</span>
             </md-autocomplete>
             <md-chip-template ng-style="{'background-color': labels[$chip].color}">
-                <span>{{labels[$chip.id].name}}</span>
-                <span>{{labels[$chip.id]}}</span> <!-- TODO: something like a hashmap for labels / labels_unsorted -->
-                <span>{{$chip}}</span>
+                <span>{{labels[$chip].name}}</span>
+                <!--<span>{{$chip}}</span>-->
             </md-chip-template>
         </md-chips>
         <br>
@@ -73,6 +77,24 @@
             <div markdown-to-html="event.content"></div>
             </p>
         </div>
+
+        <div ng-if="event.type == 3">
+            <p><i class="material-icons event-icons">label</i>Added label: {{labels[event.content].name}}</p>
+        </div>
+
+        <div ng-if="event.type == 4">
+            <p><i class="material-icons event-icons">label_outline</i>Removed label: {{labels[event.content].name}}</p>
+        </div>
+
+        <div ng-if="event.type == 5">
+            <p><i class="material-icons event-icons">person</i>Added assignee: {{users[event.content].name}}</p>
+        </div>
+
+        <div ng-if="event.type == 6">
+            <p><i class="material-icons event-icons">person_outline</i>Removed assignee: {{users[event.content].name}}</p>
+        </div>
+
+
     </div>
     <p ng-hide="events.length">No event found.</p>
     <md-tabs md-dynamic-height md-border-bottom>
