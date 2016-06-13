@@ -301,9 +301,11 @@ def main():
     @flask_login.login_required
     def remove_label():
         # TODO: Validation
-        # Remove label and associated todo_and_label entries
-        get_db().execute("DELETE FROM label WHERE l_id=?", (flask.request.json.get("label_id"),))
-        get_db().execute("DELETE FROM todo_and_label WHERE tl_l_label=?", (flask.request.json.get("label_id"),))
+        # Remove label and associated todo_and_label entries and events
+        l_id = flask.request.json.get("label_id")
+        get_db().execute("DELETE FROM label WHERE l_id=?", (l_id,))
+        get_db().execute("DELETE FROM todo_and_label WHERE tl_l_label=?", (l_id,))
+        get_db().execute("DELETE FROM event WHERE e_content=?", (l_id,))
         get_db().commit()
         return flask.Response("{\"status\": \"ok\"}", mimetype="application/json")
         # TODO: Test
