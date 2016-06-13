@@ -20,15 +20,15 @@
         <label>Assignee:</label>
         <md-chips md-max-chips="1" ng-model="todo.assignee_list" md-autocomplete-snap md-require-match="true"
                   md-on-add="chip_add_assignee($chip)" md-on-remove="chip_remove_assignee()"
-                  placeholder="Assign somebody!" secondary-placeholder="" md-transform-chip="md_chips_to_id($chip)">
+                  placeholder="Assign somebody!" md-transform-chip="md_chips_to_id($chip)">
             <md-autocomplete
                     md-selected-item="selectedItem"
                     md-search-text="searchText"
                     md-search-text-change="get_users(searchText)"
                     md-items="user in users_filtered"
                     md-item-text="user.name"
-                    <!--Disables the input if md-max-chips (=1) is reached-->
                     ng-hide="todo.assignee_list.length == 1">
+                    <!--The above disables the input if md-max-chips (=1) is reached-->
                 <span md-highlight-text="searchText">{{user.name}}</span>
             </md-autocomplete>
             <md-chip-template>
@@ -42,7 +42,7 @@
         <label>Labels:</label>
         <md-chips ng-model="assigned_labels" md-autocomplete-snap md-require-match="true"
                   placeholder="Add an item" md-transform-chip="md_chips_to_id($chip)" md-on-add="chip_add_label($chip)"
-                  md-on-remove="chip_remove_label($chip)" mdChipsDisableInput>
+                  md-on-remove="chip_remove_label($chip)">
             <md-autocomplete
                     md-selected-item="selectedItem"
                     md-search-text="searchText"

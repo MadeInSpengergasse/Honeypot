@@ -1,4 +1,4 @@
-# Honeypot
+# Honeypot [![Build Status](https://travis-ci.org/MadeInSpengergasse/Honeypot.svg?branch=master)](https://travis-ci.org/MadeInSpengergasse/Honeypot)
 ## Web-based todo list
 
 ```
