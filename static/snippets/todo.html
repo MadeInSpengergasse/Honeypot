@@ -50,9 +50,9 @@
                     md-item-text="label.name">
                 <span md-highlight-text="searchText">{{label.name}}</span>
             </md-autocomplete>
-            <md-chip-template ng-style="{'background-color': labels[$chip].color}">
-                <span>{{labels[$chip].name}}</span>
-                <!--<span>{{$chip}}</span>-->
+            <md-chip-template>
+                <md-icon aria-hidden="true" md-svg-src="images/color.svg" ng-style="{'fill': labels[$chip].color}"></md-icon>
+				<span>{{labels[$chip].name}}</span>
             </md-chip-template>
         </md-chips>
         <br>
