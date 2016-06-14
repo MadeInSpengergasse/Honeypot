@@ -26,3 +26,7 @@ section {
     -ms-user-select: none;
     user-select: none;
 }
+
+.label {
+    color: #fff;
+}
