@@ -1,3 +1,21 @@
+.content {
+    display: block;
+    float: left;
+    margin: 10px .5%;
+}
+
+section {
+    max-width: 930px;
+    width: 99%;
+    float: left;
+}
+
+@media screen and (min-width: 1200px) {
+    section {
+        width: 49%;
+    }
+}
+
 .event-icons {
     display: inline-flex;
     vertical-align: middle;
@@ -7,4 +25,8 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.label {
+    color: #fff;
 }

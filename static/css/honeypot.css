@@ -1,50 +1,67 @@
 /* Unnecessary theme details & co. */
 /*---------------------------------*/
-a{text-decoration: none; font-weight: normal; outline: 0;}
-a.md-default-theme:not(.md-button), a:not(.md-button){color: #ff9800;}
-a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100;}
-*::selection {
-	background: #ffcc80; /* WebKit/Blink Browsers */
-}
-*::-moz-selection {
-	background: #ffcc80; /* Gecko Browsers */
-}
-.md-sidenav-left, md-toolbar, img{
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none;   /* Chrome/Safari/Opera */
-	-khtml-user-select: none;    /* Konqueror */
-	-moz-user-select: none;      /* Firefox */
-	-ms-user-select: none;       /* Internet Explorer/Edge */
-	user-select: none;
+a {
+    text-decoration: none;
+    font-weight: normal;
+    outline: 0;
 }
 
+a.md-default-theme:not(.md-button), a:not(.md-button) {
+    color: #ff9800;
+}
+
+a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button) {
+    color: #e65100;
+}
+
+*::selection {
+    background: #ffcc80; /* WebKit/Blink Browsers */
+}
+
+*::-moz-selection {
+    background: #ffcc80; /* Gecko Browsers */
+}
+
+.md-sidenav-left, md-toolbar, img {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
 
 /* Left sidebar */
 /*--------------*/
 .md-sidenav-left {
-	background: #37474F;
+    background: #37474F;
 }
+
 .nav-header {
-	background: #263238;
-	cursor: pointer;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+    background: #263238;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
 .docs-logo {
-	text-align: center;
-	margin: 10px 0 20px 0;
+    text-align: center;
+    margin: 10px 0 20px 0;
 }
+
 .docs-logo img {
-	height: 200px;
-	width: auto;
-	display: block;
+    height: 200px;
+    width: auto;
+    display: block;
 }
+
 .docs-logotype {
-	color: white;
-	text-align: center;
-	font-size: 26px;
+    color: white;
+    text-align: center;
+    font-size: 26px;
 }
+
 /* Enable this section to get a grey-themed navigation menu */
 /*
 .nav-menu{
@@ -54,102 +71,117 @@ a.md-default-theme:hover:not(.md-button), a:hover:not(.md-button){color: #e65100
 .md-avatar-icon { color: rgba(255, 255, 255, 1); }
 */
 
-
 /* Toolbar */
 /*---------*/
 /* Stops the buttons from turning into eggs in mobile view */
-.mdb-noeggfix{
-	min-width: 40px !important;
-}
-/* Ellipsis for the title */
-.toolbar-title{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-    -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
-    max-width: 42em;
-}
-/* Add bigger-than symbols between the elements of the breadcrumb trail navigation */
-.breadcrumb-wrapper:not(:last-child)::after{
-	/* This unicode code point knows it */
-    content: '\3E'
-}
-/* Resize the user avatar and center it in a smaller parent element */
-.user-avatar {
-	height: 40px;
-	width: 40px;
-	position: absolute;
-	left: 50%; top: 50%;
-	-webkit-transform: translateY(-50%) translateX(-50%);
-	-moz-transform: translateY(-50%) translateX(-50%);
-	-ms-transform: translateY(-50%) translateX(-50%);
-	-o-transform: translateY(-50%) translateX(-50%);
-	transform: translateY(-50%) translateX(-50%);
+.mdb-noeggfix {
+    min-width: 40px !important;
 }
 
+/* Ellipsis for the title */
+.toolbar-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+    -o-text-overflow: ellipsis; /** Opera 9 & 10 **/
+    max-width: 42em;
+}
+
+/* Add bigger-than symbols between the elements of the breadcrumb trail navigation */
+.breadcrumb-wrapper:not(:last-child)::after {
+    /* This unicode code point knows it */
+    content: '\3E'
+}
+
+/* Resize the user avatar and center it in a smaller parent element */
+.user-avatar {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    -moz-transform: translateY(-50%) translateX(-50%);
+    -ms-transform: translateY(-50%) translateX(-50%);
+    -o-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+}
 
 /* Content */
 /*---------*/
-h1, h2{
-	font-weight: normal;
+h1, h2 {
+    font-weight: normal;
 }
-#wrapper{
-	height: 100%;
+
+#wrapper {
+    height: 100%;
 }
-.main-insert-view{
-	padding: 1% 6% 0 6%;
-	text-align: justify;
+
+.main-insert-view {
+    padding: 1% 6% 0 6%;
+    text-align: justify;
 }
+
 .status, .label {
     padding: 4px 8px;
     color: #ffffff;
     border-radius: 3px;
     margin-right: 8px;
 }
+
 .status-closed {
     background-color: #bc2b00;
 }
+
 .status-open {
     background-color: #6bc543;
 }
-.label{
-	width: 10em;
-	text-align: center;
+
+.label {
+    width: 10em;
+    text-align: center;
 }
-#noscript-warning{
-	font-family: sans-serif;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 101;
-	text-align: center;
-	font-size: 21px;
-	color: #ffffff;
-	background-color: #263238;
+
+#noscript-warning {
+    font-family: sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 101;
+    text-align: center;
+    font-size: 21px;
+    color: #ffffff;
+    background-color: #263238;
 }
+
 .small-profile-picture {
     height: 20px;
     width: 20px;
     border-radius: 10%;
     vertical-align: middle;
 }
+
 .add-dialog {
     margin: 10px;
 }
+
 .add-dialog-min-width {
-	min-width: 500px;
+    min-width: 500px;
 }
-.divider{
-	margin-top: 6px;
+
+.divider {
+    margin-top: 6px;
 }
-.list-spacing{
-	padding: 0px !important;
+
+.list-spacing {
+    padding: 0 !important;
 }
+
 .list-empty-notice {
-	margin-top: 13px;
-	display: block;
+    margin-top: 13px;
+    display: block;
     text-align: center;
 
     -webkit-user-select: none;
@@ -157,5 +189,5 @@ h1, h2{
     -ms-user-select: none;
     user-select: none;
 
-	cursor: default;
+    cursor: default;
 }

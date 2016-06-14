@@ -1,11 +1,15 @@
 var app = angular.module('honeypotApp', ['ngRoute', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ng-showdown', 'mdColorPicker', 'crumble']);
 
-app.factory('Page', function() {
-   var title = 'Honeypot';
-   return {
-     title: function() { return title; },
-     setTitle: function(newTitle) { title = newTitle + " - Honeypot" }
-   };
+app.factory('Page', function () {
+    var title = 'Honeypot';
+    return {
+        title: function () {
+            return title;
+        },
+        setTitle: function (newTitle) {
+            title = newTitle + " - Honeypot"
+        }
+    };
 });
 
 app.config(function ($routeProvider, $mdThemingProvider) {
@@ -37,7 +41,7 @@ app.config(function ($routeProvider, $mdThemingProvider) {
         regex_search: 'project',
         dynamic_parent: true
     }).when('/:templatePath', {
-        template: '<ng-include src="templatePath" />',
+        template: '<ng-include src="templatePath">',
         controller: 'CatchAllCtrl',
         label: '{{lowest_title}}', // lowest (catchall)
         parent: '/'
@@ -53,7 +57,7 @@ app.config(function ($routeProvider, $mdThemingProvider) {
     });
 });
 
-app.controller("TitleController", function($scope, Page) {
+app.controller("TitleController", function ($scope, Page) {
     $scope.Page = Page;
 });
 
@@ -170,7 +174,7 @@ app.controller("HeaderController", function ($rootScope, $scope, $http, $locatio
             console.log("not authorized");
             return;
         }
-        var arr = [];
+        var arr = {};
         data.forEach(function (value) {
             arr[value.id] = value;
         });
@@ -285,9 +289,12 @@ app.controller("ProjectsController", function ($scope, $http, $mdDialog, $mdMedi
             $mdDialog.hide()
         };
         $scope.submit = function (title, description) {
-            if (description == undefined) {
-                description = "";
+            if (title == null) {
+                alert("Please enter a title!");
+                return;
             }
+            if (description == null) description = "";
+
             $http.post("/api/add_project", {"title": title, "description": description}).success(function (data) {
                 console.log(data);
                 if (data.status == "ok") {
@@ -350,14 +357,18 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
         $scope.cancel = function () {
             $mdDialog.hide()
         };
-        $scope.submit = function (title, description, asignee, milestone) {
-            console.log(title + " - " + description + " - " + asignee + " - " + milestone);
+        $scope.submit = function (title, description, assignee, milestone) {
+            console.log(title + " - " + description + " - " + assignee + " - " + milestone);
+            if (title == null) {
+                alert("Please enter a title!");
+                return;
+            }
             if (description == null) description = "";
 
             $http.post("/api/add_todo", {
                 "title": title,
                 "description": description,
-                "asignee": asignee,
+                "assignee": assignee,
                 "milestone": milestone,
                 "project_id": project_id
             }).success(function (data) {
@@ -370,15 +381,16 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
                 }
             });
         };
+        //$scope.get_users
         $scope.get_users = function (name) {
             var parameters;
-            if(name.length <= 1) {
+            if (name.length <= 1) {
                 parameters = {};
             } else {
                 parameters = {params: {name: name}};
             }
             console.log("get_users - " + name);
-            console.log("Selected: " + $scope.selectedItem); // title description asignee milestone
+            console.log("Selected: " + $scope.selectedItem); // title description assignee milestone
             $http.get("/api/get_users", parameters).success(function (data) {
                 $scope.users_filtered = data;
                 console.log(data);
@@ -402,12 +414,19 @@ app.controller("ProjectController", function ($scope, $routeParams, $http, $mdMe
 app.controller("TodoController", function ($scope, $rootScope, $routeParams, $http, Page) {
     $scope.id = $routeParams.todo_id;
     $scope.project_id = $routeParams.project_id;
-    $scope.update_status_texts = ["Close todo", "Re-open todo"];
+    // $scope.update_status_texts = ["Close todo", "Re-open todo"];
     $http.get("/api/get_todo_detail", {params: {id: $routeParams.todo_id}}).success(function (data) {
         Page.setTitle(data.title);
         $rootScope.handle_crumble($scope.project_id, data.title);
         console.log(data);
+        // data.status = data.status == 1; // convert 0/1 to boolean
         $scope.todo = data;
+        if($scope.todo.assignee == null) {
+            $scope.todo.assignee_list = [];
+        } else {
+            $scope.todo.assignee_list = [$scope.todo.assignee];
+        }
+        console.log($scope.todo.assignee_list)
     });
     $http.get("/api/get_events", {params: {id: $scope.id}}).success(function (data) {
         console.log(data);
@@ -415,31 +434,97 @@ app.controller("TodoController", function ($scope, $rootScope, $routeParams, $ht
     });
     $http.get("/api/get_assigned_labels", {params: {id: $scope.id}}).success(function (data) {
         $scope.assigned_labels = data;
+        console.log("assigned_labels");
         console.log(data);
     });
     $http.get("/api/get_labels").success(function (data) {
-        var arr = [];
+        var arr = {};
         data.forEach(function (entry) {
             arr[entry.id] = entry;
         });
         $scope.labels = arr;
+        $scope.labels_unsorted = data;
+        console.log("labels: ");
+        console.log($scope.labels);
     });
     $scope.update_status = function () {
         console.log("update status");
-        var status = $scope.todo.status == 0 ? 1 : 0;
+        var status = $scope.todo.status; //== true ? 1 : 0; // convert boolean to 0/1
         $http.post("/api/update_todo_status", {todo_id: $scope.id, status: status}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
-                $scope.todo.status = status;
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
                 $scope.events.push(data.new_event)
             }
         });
     };
     $scope.submit_comment = function (comment) {
+        if (comment == null) {
+            alert("Please enter a comment!");
+            return;
+        }
         $http.post("/api/add_comment", {content: comment, todo_id: $scope.id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
                 $scope.events.push(data.new_comment);
+            }
+        });
+    };
+    //$scope.get_users
+    $scope.get_users = function (name) {
+        var parameters;
+        if (name.length <= 1) {
+            parameters = {};
+        } else {
+            parameters = {params: {name: name}};
+        }
+        console.log("get_users - " + name);
+        console.log("Selected: " + $scope.selectedItem); // title description assignee milestone
+        $http.get("/api/get_users", parameters).success(function (data) {
+            $scope.users_filtered = data;
+            console.log(data);
+        });
+    };
+    $scope.md_chips_to_id = function(chip) {
+        return chip.id;
+    };
+    $scope.chip_add_label = function(label_id) {
+        console.log("ADD LABEL!!!!");
+        $http.post("/api/add_label_to_todo", {label_id: label_id, todo_id: parseInt($scope.id)}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
+    };
+    $scope.chip_remove_label = function(label_id) {
+        console.log("REMOVE LABEL!!!!");
+        $http.post("/api/remove_label_from_todo", {label_id: label_id, todo_id: parseInt($scope.id)}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
+    };
+    $scope.chip_add_assignee = function(new_assignee) {
+        console.log("ADD ASSIGNEE!!!!");
+        $http.post("/api/update_todo_assignee", {todo_id: parseInt($scope.id), assignee: new_assignee}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
+            }
+        });
+    };
+    $scope.chip_remove_assignee = function() {
+        console.log("REMOVE ASSIGNEE!!!!");
+        $http.post("/api/update_todo_assignee", {todo_id: parseInt($scope.id), assignee: null}).success(function(data) {
+            console.log(data);
+            if (data.status == "ok") {
+                //$scope.todo.status = status == 1; // convert 0/1 to boolean
+                $scope.events.push(data.new_event)
             }
         });
     }
@@ -478,6 +563,10 @@ app.controller("MilestonesController", function ($scope, $routeParams, $http, $m
         $scope.fullscreen = fullscreen;
 
         $scope.submit = function (title, description, duedate) {
+            if (title == null) {
+                alert("Please enter a title!");
+                return;
+            }
             if (description == null) description = "";
 
             console.log(title + " - " + description + " - " + duedate);
@@ -519,10 +608,10 @@ app.controller("MilestoneController", function ($scope, $routeParams, $http, $lo
         var date = new Date(timestamp);
         return date.getShortMonthName() + " " + date.getDate() + ", " + date.getFullYear() + ", " + ("0" + date.getUTCHours()).slice(-2) + ":" + ("0" + date.getUTCMinutes()).slice(-2);
     };
-    $scope.remove_milestone = function (confirm, milestone_id) {
+    $scope.remove_milestone = function (confirm) {
         console.log("remove");
         if (confirm === false) return;
-        $http.post("/api/remove_milestone", {milestone_id: milestone_id}).success(function (data) {
+        $http.post("/api/remove_milestone", {milestone_id: $scope.milestone_id}).success(function (data) {
             console.log(data);
             if (data.status == "ok") {
                 $location.path("/project/" + $scope.project_id + "/milestones");
@@ -594,6 +683,10 @@ app.controller("LabelController", function ($scope, $http, $mdMedia, $mdDialog) 
         //     }
         // };
         $scope.submit = function (name, color) {
+            if (name == null || color == null) {
+                alert("Please enter a name and a color!");
+                return;
+            }
             $http.post("/api/add_label", {name: name, color: color}).success(function (data) {
                 console.log(data);
                 if (data.status == "ok") {

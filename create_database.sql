@@ -33,13 +33,13 @@ CREATE TABLE IF NOT EXISTS todo (
   t_id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   t_title       TEXT    NOT NULL,
   t_description TEXT    NOT NULL,
-  t_u_asignee   INTEGER,
+  t_u_assignee  INTEGER,
   t_m_milestone INTEGER,
   t_status      INTEGER NOT NULL,
   t_p_project   INTEGER,
 
   FOREIGN KEY (t_p_project) REFERENCES project (p_id),
-  FOREIGN KEY (t_u_asignee) REFERENCES user (u_id),
+  FOREIGN KEY (t_u_assignee) REFERENCES user (u_id),
   FOREIGN KEY (t_m_milestone) REFERENCES milestone (m_id)
 );
 
@@ -53,12 +53,12 @@ CREATE TABLE IF NOT EXISTS todo_and_label (
 );
 
 CREATE TABLE IF NOT EXISTS event (
-  e_id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  e_type         INTEGER NOT NULL,
-  e_content      TEXT,
-  e_timestamp DATETIME DEFAULT current_timestamp,
-  e_u_id INTEGER NOT NULL,
-  e_t_id INTEGER NOT NULL,
+  e_id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  e_type      INTEGER NOT NULL,
+  e_content   TEXT,
+  e_timestamp DATETIME                     DEFAULT current_timestamp,
+  e_u_id      INTEGER NOT NULL,
+  e_t_id      INTEGER NOT NULL,
 
   FOREIGN KEY (e_u_id) REFERENCES user (u_id),
   FOREIGN KEY (e_t_id) REFERENCES todo (t_id)

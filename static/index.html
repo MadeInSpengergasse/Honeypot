@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="honeypotApp">
 <head ng-controller="TitleController">
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title ng-bind="Page.title()"></title>
-	<link rel="icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96 128x128 192x192" href="/images/favicon.ico" type="image/x-icon">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="theme-color" content="#37474F">
-	<meta name="msapplication-navbutton-color" content="#37474F"/>
-	
+    <link rel="icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96 128x128 192x192" href="/images/favicon.ico"
+          type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#37474F">
+    <meta name="msapplication-navbutton-color" content="#37474F"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.min.css">
-	<link rel="stylesheet" href="/bower_components/md-color-picker/dist/mdColorPicker.min.css" />
+    <link rel="stylesheet" href="/bower_components/md-color-picker/dist/mdColorPicker.min.css"/>
+    <link rel="manifest" href="manifest.json">
     <script src="/bower_components/angular/angular.min.js"></script>
     <script src="/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
@@ -20,8 +21,8 @@
     <script src="/bower_components/angular-material/angular-material.min.js"></script>
     <script src="/bower_components/showdown/dist/showdown.min.js"></script>
     <script src="/bower_components/ng-showdown/dist/ng-showdown.min.js"></script>
-	<script src="/bower_components/tinycolor/dist/tinycolor-min.js"></script>
-	<script src="/bower_components/md-color-picker/dist/mdColorPicker.min.js"></script>
+    <script src="/bower_components/tinycolor/dist/tinycolor-min.js"></script>
+    <script src="/bower_components/md-color-picker/dist/mdColorPicker.min.js"></script>
     <script src="/bower_components/angular-crumble/crumble.js"></script>
 
     <script src="/js/honeypot.js"></script>
@@ -29,62 +30,67 @@
 </head>
 <body>
 <div layout="row" id="wrapper" ng-controller="AppCtrl" ng-cloak>
-    <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop md-whiteframe="4">
-	  <a ng-click="href('/'); toggleLeft()">
-		<header class="nav-header">
+    <md-sidenav class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" md-disable-backdrop
+                md-whiteframe="4">
+        <a ng-click="href('/'); toggleLeft()">
+            <header class="nav-header">
 		  <span class="docs-logo">
-			<img src="images/logo.svg" alt="" />
+			<img src="images/logo.svg" alt=""/>
 			<span class="docs-logotype">Honeypot</span>
 		  </span>
-	    </header>
-	  </a>
-      <md-content>
-		<div class="nav-menu">
-		  <md-list>
-			<md-list-item ng-show="user == null">
-			  <p>Please login first.</p>
-			</md-list-item>
-			<md-list-item ng-show="user != null" ng-click="href('/projects'); toggleLeft()">
-			  <md-icon class="md-avatar-icon">folder_shared</md-icon>
-			  <p>Projects</p>
-			</md-list-item>
-			<md-list-item ng-show="user != null" ng-click="href('/teammembers'); toggleLeft()" ng-disabled="true">
-			  <md-icon class="md-avatar-icon">people</md-icon>
-			  <p>Teammembers</p>
-			</md-list-item>
-			<md-list-item ng-show="user != null" ng-click="href('/labels'); toggleLeft()">
-			  <md-icon class="md-avatar-icon">label</md-icon>
-			  <p>Labels</p>
-			</md-list-item>
-		  </md-list>
-		</div>
-      </md-content>
+            </header>
+        </a>
+        <md-content>
+            <div class="nav-menu">
+                <md-list>
+                    <md-list-item ng-show="user == null">
+                        <p>Please login first.</p>
+                    </md-list-item>
+                    <md-list-item ng-show="user != null" ng-click="href('/projects'); toggleLeft()">
+                        <md-icon class="md-avatar-icon">folder_shared</md-icon>
+                        <p>Projects</p>
+                    </md-list-item>
+                    <md-list-item ng-show="user != null" ng-click="href('/teammembers'); toggleLeft()"
+                                  ng-disabled="true">
+                        <md-icon class="md-avatar-icon">people</md-icon>
+                        <p>Teammembers</p>
+                    </md-list-item>
+                    <md-list-item ng-show="user != null" ng-click="href('/labels'); toggleLeft()">
+                        <md-icon class="md-avatar-icon">label</md-icon>
+                        <p>Labels</p>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </md-content>
     </md-sidenav>
-	
+
     <div layout="column" flex>
-	  <md-toolbar ng-controller="HeaderController">
-		<div class="md-toolbar-tools">
-		  <md-button hide-gt-md class="md-icon-button mdb-noeggfix" aria-label="Settings" ng-click="toggleLeft()">
-			<md-icon class="md-avatar-icon">menu</md-icon>
-          </md-button>
-		  <span class="toolbar-title"><span class="breadcrumb-wrapper" ng-repeat="bc in crumble.trail"><md-button ng-click="href(bc.path)">{{bc.label}}</md-button></span></span>
-		  <span flex></span><!-- fill up the space between left and right area -->
-		  <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
-		  <md-button ng-show="user != null" title="{{user.name}}" ng-click="href('/profile')" aria-label="Profile picture" class="md-icon-button launch mdb-noeggfix">
-			<img class="user-avatar" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?v=3">
-		  </md-button>
-		  <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
-		</div>
-	  </md-toolbar>
-	  
-	  <md-content class="main-insert-view" ng-view></md-content>
-	</div>
+        <md-toolbar ng-controller="HeaderController">
+            <div class="md-toolbar-tools">
+                <md-button hide-gt-md class="md-icon-button mdb-noeggfix" aria-label="Settings" ng-click="toggleLeft()">
+                    <md-icon class="md-avatar-icon">menu</md-icon>
+                </md-button>
+                <span class="toolbar-title"><span class="breadcrumb-wrapper" ng-repeat="bc in crumble.trail"><md-button
+                        ng-click="href(bc.path)">{{bc.label}}</md-button></span></span>
+                <span flex></span><!-- fill up the space between left and right area -->
+                <md-button ng-show="user == null" ng-click="goto(github_login_url)">Login</md-button>
+                <md-button ng-show="user != null" title="{{user.name}}" ng-click="href('/profile')"
+                           aria-label="Profile picture" class="md-icon-button launch mdb-noeggfix">
+                    <img class="user-avatar" ng-src="https://avatars.githubusercontent.com/u/{{user.id}}?v=3">
+                </md-button>
+                <md-button ng-show="user != null" ng-click="logout()">Logout</md-button>
+            </div>
+        </md-toolbar>
+
+        <md-content class="main-insert-view" ng-view></md-content>
+    </div>
 </div>
 <noscript>
-  <div id="noscript-warning">
-	<p>This website will not work properly due to JavaScript being disabled.</p>
-	<p>If this hasn't been done on purpose, you can <a href="http://www.enable-javascript.com/" target="_blank">find instructions on how to enable it here</a>.</p>
-  </div>
+    <div id="noscript-warning">
+        <p>This website will not work properly due to JavaScript being disabled.</p>
+        <p>If this hasn't been done on purpose, you can <a href="http://www.enable-javascript.com/" target="_blank">find
+            instructions on how to enable it here</a>.</p>
+    </div>
 </noscript>
 </body>
 </html>

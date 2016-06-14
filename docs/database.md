@@ -16,7 +16,7 @@ __m <-> n relationship between labels and todos!__
 t_id (unique id) (not null)
 t_title (big title) (not null, no empty string)
 t_description (longer text) (not null, only empty string)
-t_u_asignee (user id; more than one?) (can be null)
+t_u_assignee (user id; more than one?) (can be null)
 t_m_milestone (milestone id) (can be null)
 t_status (closed?) (0=open, 1=closed)
 t_ts_created (timestamp of created) (not null)
@@ -36,13 +36,10 @@ p_title (big title)
 p_description (long-ish description)
 p_status (closed?)
 
-### Timestamp
-ts_id (unique id)
-ts_u_id (user who did that)
-ts_timestamp (when it happened)
-
 ### Event
-e_id (unique id)
-e_type INTEGER (0=opened, 1=closed, 2=comment)
-e_content TEXT (comment content)
-e_ts_timestamp INTEGER
+e_id INTEGER (unique id)
+e_u_id INTEGER (user who did that)
+e_t_id INTEGER (todo id)
+e_type INTEGER (0=opened, 1=closed, 2=comment, 3=add_label, 4=remove_label, 5=add_assignee, 6=remove_assignee)
+e_content TEXT (comment content or other values we need (such as user_id))
+e_timestamp TEXT (timestamp)
