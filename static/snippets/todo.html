@@ -3,9 +3,7 @@
 <h2>#{{ id }} {{ todo.title }}</h2>
 <md-divider></md-divider>
 
-<section id="content">
-    <!-- Do we need that form? -->
-    <form>
+<section>
         <label>Status:</label>
         <!-- Don't ask why 0 is true and 1 is false... -->
         <md-switch ng-change="update_status();" ng-model="todo.status" ng-true-value="0" ng-false-value="1">
@@ -58,10 +56,9 @@
         <br>
         <label>Description:</label>
         <p markdown-to-html="todo.description"></p>
-    </form>
 </section>
 
-<section id="content">
+<section>
     <h2>Events</h2>
     <div class="events" ng-repeat="event in events">
         <div ng-if="event.type == 0">

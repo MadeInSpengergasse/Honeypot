@@ -1,18 +1,15 @@
-.content {
-    display: block;
-    float: left;
-    margin: 10px .5%;
-}
-
 section {
-    max-width: 930px;
+	border-width: 10px;
+	border-color: black;
     width: 99%;
+	height: 87%;
     float: left;
 }
 
 @media screen and (min-width: 1200px) {
     section {
         width: 49%;
+		overflow: auto;
     }
 }
 
@@ -27,6 +24,7 @@ section {
     user-select: none;
 }
 
-md-chip md-icon{
+/* Temporary dirty fix. We need the md-contact-chips or just fully colored ones */
+md-chip md-icon {
 	margin-bottom: 4px;
 }
