@@ -6,7 +6,7 @@ import json
 import requests
 import re
 import flask
-import flask.ext.login as flask_login
+import flask_login
 
 import config
 

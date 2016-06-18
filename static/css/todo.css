@@ -24,5 +24,8 @@ section {
 
 /* Temporary dirty fix. We need the md-contact-chips or just fully colored ones */
 md-chip md-icon {
-	margin-bottom: 4px;
+    margin-bottom: 4px;
+}
+.label {
+    color: #fff;
 }
