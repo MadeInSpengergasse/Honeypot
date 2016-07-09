@@ -13,6 +13,7 @@ import config
 GITHUB_ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token"
 GITHUB_USER = "https://api.github.com/user"
 
+app = flask.Flask(__name__)
 
 class User(flask_login.UserMixin):
     pass
@@ -27,8 +28,6 @@ def create_database():
 
 
 def main():
-    app = flask.Flask(__name__)
-
     app.secret_key = config.secret_key
     login_manager = flask_login.LoginManager()
     login_manager.init_app(app)
@@ -572,6 +571,15 @@ def get_db():
     return flask.g.sqlite_db
 
 
-if __name__ == '__main__':
-    create_database()
-    main()
+create_database()
+main()
+
+if __name__ == '__main__': 
+    try:
+        app.run(host=config.host,
+                port=config.port,
+                ssl_context=ssl_context,
+                debug=config.debug)
+    except OSError as err:
+        print("[ERROR] " + err.strerror, file=sys.stderr)
+        print("[ERROR] The program will now terminate.", file=sys.stderr)
