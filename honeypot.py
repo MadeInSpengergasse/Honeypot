@@ -13,6 +13,7 @@ import config
 GITHUB_ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token"
 GITHUB_USER = "https://api.github.com/user"
 
+app = flask.Flask(__name__)
 
 class User(flask_login.UserMixin):
     pass
@@ -27,8 +28,6 @@ def create_database():
 
 
 def main():
-    app = flask.Flask(__name__)
-
     app.secret_key = config.secret_key
     login_manager = flask_login.LoginManager()
     login_manager.init_app(app)
