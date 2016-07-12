@@ -592,6 +592,9 @@ def get_db():
 create_database()
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == "test":
+        print("Finishing because of 'test' argument.")
+        sys.exit()
     try:
         if config.use_wsgi:
             app.run(debug=config.debug)
@@ -604,6 +607,7 @@ if __name__ == '__main__':
                     port=config.port,
                     ssl_context=ssl_context,
                     debug=config.debug)
+
     except OSError as err:
         print("[ERROR] " + err.strerror, file=sys.stderr)
         print("[ERROR] The program will now terminate.", file=sys.stderr)
